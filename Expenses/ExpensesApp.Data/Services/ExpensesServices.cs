@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpensesApp.Data.Services
+namespace Expenses.Data.Services
 {
     public class ExpensesServices
     {

@@ -1,5 +1,5 @@
 ﻿using Expenses.Data.EntityModel;
-using ExpensesApp.Data.Services;
+using Expenses.Data.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

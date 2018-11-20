@@ -108,7 +108,7 @@ namespace ExpensesApp.Data.DataAccess
                 var incomeTarget = EntityContext.Incomes.Where(x => x.Income_Id == idincome).SingleOrDefault();
                 if (incomeTarget != null)
                 {
-                    EntityContext.Expenses.Remove(incomeTarget);
+                    EntityContext.Incomes.Remove(incomeTarget);
                     EntityContext.SaveChanges();
                 }
                 else throw new Exception("No se encontro el registro disponible");
