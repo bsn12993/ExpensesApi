@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpensesApp.Data.DataAccess
+namespace Expenses.Data.DataAccess
 {
     public class DA_Expense
     {
@@ -49,6 +49,25 @@ namespace ExpensesApp.Data.DataAccess
                     Response.Result = Expense;
                 }
                 else throw new Exception("No se recuperaron datos");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+
+        public Response GetTotalExpenceByCategoryAndUser(int idcategory, int iduser)
+        {
+            try
+            {
+                var Expense = EntityContext.Expenses.Where(x => x.Category_Id == idcategory && x.User_Id == iduser).Sum(x => x.Amount);
+                Response.IsSuccess = true;
+                Response.Message = "Se recuperaron datos";
+                Response.Result = Expense;
             }
             catch (Exception e)
             {

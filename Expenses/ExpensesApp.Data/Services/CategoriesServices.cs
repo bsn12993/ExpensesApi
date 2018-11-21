@@ -1,6 +1,6 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.EntityModel;
-using ExpensesApp.Data.DataAccess;
+using Expenses.Data.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;

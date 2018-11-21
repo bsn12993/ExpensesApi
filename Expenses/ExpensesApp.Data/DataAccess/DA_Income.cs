@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpensesApp.Data.DataAccess
+namespace Expenses.Data.DataAccess
 {
     public class DA_Income
     {
@@ -50,6 +50,24 @@ namespace ExpensesApp.Data.DataAccess
                     Response.Result = Incomes;
                 }
                 else throw new Exception("No se recuperaron datos");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response GetTotalIncomesByUser(int iduser)
+        {
+            try
+            {
+                var Incomes = EntityContext.Incomes.Where(x => x.User_Id == iduser).Sum(x => x.Amount);
+                Response.IsSuccess = true;
+                Response.Message = "Se recuperaron datos";
+                Response.Result = Incomes;
             }
             catch (Exception e)
             {

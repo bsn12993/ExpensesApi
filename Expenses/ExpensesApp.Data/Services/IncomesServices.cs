@@ -1,6 +1,6 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.EntityModel;
-using ExpensesApp.Data.DataAccess;
+using Expenses.Data.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +26,11 @@ namespace Expenses.Data.Services
         public Response GetIncomeById(int idincome)
         {
             return DA_Income.GetIncomeById(idincome);
+        }
+
+        public Response GetIncomesByUser(int iduser)
+        {
+            return DA_Income.GetIncomesByUser(iduser);
         }
 
         public Response PostIncome(Income income)

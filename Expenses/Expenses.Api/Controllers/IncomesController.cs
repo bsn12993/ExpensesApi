@@ -43,6 +43,17 @@ namespace Expenses.Api.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
+        [HttpGet]
+        [Route("byuser/{iduser}")]
+        public HttpResponseMessage GetIncomeByUser(int iduser)
+        {
+            var response = IncomesServices.GetIncomesByUser(iduser);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+        }
+
         [HttpPost]
         [Route("create")]
         public HttpResponseMessage PostIncome([FromBody] Income income)

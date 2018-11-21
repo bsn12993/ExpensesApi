@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpensesApp.Data.DataAccess
+namespace Expenses.Data.DataAccess
 {
     public class DA_Category
     {
