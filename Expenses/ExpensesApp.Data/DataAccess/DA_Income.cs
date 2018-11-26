@@ -60,7 +60,7 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-        public Response GetTotalIncomesByUser(int iduser)
+        public Response GetIncomesByUser(int iduser)
         {
             try
             {

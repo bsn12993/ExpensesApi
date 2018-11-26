@@ -97,8 +97,21 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
-                EntityContext.Users.Add(user);
-                EntityContext.SaveChanges();
+                var validateUser = EntityContext.Users.Where(x => x.Email.Equals(user.Email) && x.Password.Equals(user.Password)).LongCount();
+                if (validateUser == 0)
+                {
+                    EntityContext.Users.Add(user);
+                    EntityContext.SaveChanges();
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha registrado un nuevo usuario";
+                    Response.Result = null;
+                }
+                else
+                {
+                    Response.IsSuccess = false;
+                    Response.Message = "Ya existe un usuario con el mismo correo";
+                    Response.Result = null;
+                }
             }
             catch (Exception e)
             {
