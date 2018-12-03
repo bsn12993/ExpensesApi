@@ -1,6 +1,7 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.DataAccess;
 using Expenses.Data.EntityModel;
+using ExpensesApp.Core.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Expenses.Data.Services
 
         public Response GetUserEmailAndPassaword(string email, string password)
         {
-            return DA_Users.GetUserByEmailAndPassword(email, password);
+            return DA_Users.GetUserByEmailAndPassword(email.Decrypter(), password.Decrypter());
         }
 
         public Response PostUser(User user)
