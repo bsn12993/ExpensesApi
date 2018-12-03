@@ -14,6 +14,11 @@ namespace Expenses.Data.DataAccess
         EntityContext EntityContext { get; set; }
         Response Response { get; set; }
 
+        public DA_Income()
+        {
+            EntityContext = new EntityContext();
+            Response = new Response();
+        }
 
         public Response GetIncomes()
         {
@@ -60,14 +65,18 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-        public Response GetIncomesByUser(int iduser)
+        public Response GetIncomesTotal(int iduser)
         {
             try
             {
                 var Incomes = EntityContext.Incomes.Where(x => x.User_Id == iduser).Sum(x => x.Amount);
                 Response.IsSuccess = true;
                 Response.Message = "Se recuperaron datos";
-                Response.Result = Incomes;
+                Response.Result = new Income
+                {
+                    User_Id = iduser,
+                    Amount = Incomes
+                };
             }
             catch (Exception e)
             {
@@ -85,6 +94,10 @@ namespace Expenses.Data.DataAccess
             {
                 EntityContext.Incomes.Add(income);
                 EntityContext.SaveChanges();
+
+                Response.IsSuccess = true;
+                Response.Message = "Se ha registrado un ingreso";
+                Response.Result = null;
             }
             catch (Exception e)
             {

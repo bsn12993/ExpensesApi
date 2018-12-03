@@ -10,7 +10,7 @@ using System.Web.Http;
 
 namespace Expenses.Api.Controllers
 {
-    [RoutePrefix("api/expenses")]
+    [RoutePrefix("api/incomes")]
     public class IncomesController : ApiController
     {
         // GET: Incomes
@@ -44,10 +44,10 @@ namespace Expenses.Api.Controllers
         }
 
         [HttpGet]
-        [Route("byuser/{iduser}")]
+        [Route("total/byuser/{iduser}")]
         public HttpResponseMessage GetIncomeByUser(int iduser)
         {
-            var response = IncomesServices.GetIncomesByUser(iduser);
+            var response = IncomesServices.GetIncomesTotal(iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

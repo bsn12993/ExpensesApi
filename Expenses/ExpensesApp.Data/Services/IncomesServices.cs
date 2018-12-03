@@ -28,9 +28,9 @@ namespace Expenses.Data.Services
             return DA_Income.GetIncomeById(idincome);
         }
 
-        public Response GetIncomesByUser(int iduser)
+        public Response GetIncomesTotal(int iduser)
         {
-            return DA_Income.GetIncomesByUser(iduser);
+            return DA_Income.GetIncomesTotal(iduser);
         }
 
         public Response PostIncome(Income income)
