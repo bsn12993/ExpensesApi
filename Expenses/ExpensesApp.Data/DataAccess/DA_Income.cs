@@ -42,6 +42,27 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
+        public Response GetIncomesByUser(int iduser)
+        {
+            try
+            {
+                var Incomes = EntityContext.Incomes.Where(x => x.User_Id == iduser).OrderByDescending(x => x.Date).ToList();
+                if (Incomes != null)
+                {
+                    Response.IsSuccess = true;
+                    Response.Message = "Se recuperaron datos";
+                    Response.Result = Incomes;
+                }
+                else throw new Exception("No se recuperaron datos");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
 
         public Response GetIncomeById(int idincome)
         {

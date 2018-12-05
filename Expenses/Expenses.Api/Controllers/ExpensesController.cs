@@ -32,6 +32,16 @@ namespace Expenses.Api.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
+        [HttpGet]
+        [Route("history/byuser/{id}")]
+        public HttpResponseMessage GetExpenses(int id)
+        {
+            var response = ExpensesServices.GetExpencesHistory(id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+        }
 
         [HttpGet]
         [Route("byid/{id}")]

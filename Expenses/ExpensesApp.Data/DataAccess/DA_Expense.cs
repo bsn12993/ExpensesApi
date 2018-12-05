@@ -14,11 +14,39 @@ namespace Expenses.Data.DataAccess
         EntityContext EntityContext { get; set; }
         Response Response { get; set; }
 
+        public DA_Expense()
+        {
+            EntityContext = new EntityContext();
+            Response = new Response();
+        }
+
         public Response GetExpences()
         {
             try
             {
-                var Expenses = EntityContext.Expenses.ToList();
+                var Expenses = EntityContext.Expenses.Include("Category").OrderByDescending(x => x.Date).ToList();
+                if (Expenses != null)
+                {
+                    Response.IsSuccess = true;
+                    Response.Message = "Se recuperaron datos";
+                    Response.Result = Expenses;
+                }
+                else throw new Exception("No se recuperaron datos");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response GetExpencesHistory(int iduser)
+        {
+            try
+            {
+                var Expenses = EntityContext.Expenses.Include("Category").Where(x => x.User_Id == iduser).ToList();
                 if (Expenses != null)
                 {
                     Response.IsSuccess = true;
@@ -84,6 +112,10 @@ namespace Expenses.Data.DataAccess
             {
                 EntityContext.Expenses.Add(expense);
                 EntityContext.SaveChanges();
+
+                Response.IsSuccess = true;
+                Response.Message = "se ha registrado el gasto";
+                Response.Result = null;
             }
             catch (Exception e)
             {
@@ -106,6 +138,10 @@ namespace Expenses.Data.DataAccess
                     expenseTarget.Category_Id = expense.Category_Id;
                     expenseTarget.Date = expense.Date;
                     EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "se ha actualizado el gasto";
+                    Response.Result = null;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
@@ -127,6 +163,10 @@ namespace Expenses.Data.DataAccess
                 {
                     EntityContext.Expenses.Remove(expenseTarget);
                     EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "se ha eliminado el gasto";
+                    Response.Result = null;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }

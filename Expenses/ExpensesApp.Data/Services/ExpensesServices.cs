@@ -23,6 +23,11 @@ namespace Expenses.Data.Services
             return DA_Expense.GetExpences();
         }
 
+        public Response GetExpencesHistory(int iduser)
+        {
+            return DA_Expense.GetExpencesHistory(iduser);
+        }
+
         public Response GetExpensesById(int idexpense)
         {
             return DA_Expense.GetExpenceById(idexpense);

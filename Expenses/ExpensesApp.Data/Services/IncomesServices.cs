@@ -23,6 +23,11 @@ namespace Expenses.Data.Services
             return DA_Income.GetIncomes();
         }
 
+        public Response GetIncomesByUser(int iduser)
+        {
+            return DA_Income.GetIncomesByUser(iduser);
+        }
+
         public Response GetIncomeById(int idincome)
         {
             return DA_Income.GetIncomeById(idincome);

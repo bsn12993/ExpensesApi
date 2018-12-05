@@ -33,6 +33,17 @@ namespace Expenses.Api.Controllers
         }
 
         [HttpGet]
+        [Route("history/byuser/{id}")]
+        public HttpResponseMessage GetIncomesByUser(int id)
+        {
+            var response = IncomesServices.GetIncomesByUser(id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+        }
+
+        [HttpGet]
         [Route("byid/{id}")]
         public HttpResponseMessage GetIncomeById(int id)
         {
