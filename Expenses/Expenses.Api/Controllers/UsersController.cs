@@ -69,7 +69,7 @@ namespace Expenses.Api.Controllers
 
 
         [HttpPut]
-        [Route("update")]
+        [Route("update/{id}")]
         public HttpResponseMessage PutUser([FromBody] User user, int id)
         {
             var response = UsersServices.PutUser(user, id);
