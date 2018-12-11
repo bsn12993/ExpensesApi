@@ -87,6 +87,28 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
+        public Response GetExpenceByUser(int iduser)
+        {
+            try
+            {
+                var Expense = EntityContext.Expenses.Where(x => x.User_Id == iduser).ToList();
+                if (Expense != null)
+                {
+                    Response.IsSuccess = true;
+                    Response.Message = "Se recuperaron datos";
+                    Response.Result = Expense;
+                }
+                else throw new Exception("No se recuperaron datos");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
 
         public Response GetTotalExpenceByCategoryAndUser(int idcategory, int iduser)
         {

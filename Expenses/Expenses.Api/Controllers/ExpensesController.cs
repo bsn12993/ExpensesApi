@@ -54,6 +54,18 @@ namespace Expenses.Api.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
+        [HttpGet]
+        [Route("byuser/{iduser}")]
+        public HttpResponseMessage GetExpenceByUser(int iduser)
+        {
+            var response = ExpensesServices.GetExpenceByUser(iduser);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+        }
+
+
         [HttpPost]
         [Route("create")]
         public HttpResponseMessage PostExpense([FromBody] Expense expense)

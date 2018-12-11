@@ -33,6 +33,11 @@ namespace Expenses.Data.Services
             return DA_Expense.GetExpenceById(idexpense);
         }
 
+        public Response GetExpenceByUser(int iduser)
+        {
+            return DA_Expense.GetExpenceByUser(iduser);
+        }
+
         public Response PostExpense(Expense expense)
         {
             return DA_Expense.InsertExpence(expense);

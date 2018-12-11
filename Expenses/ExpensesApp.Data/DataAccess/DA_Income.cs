@@ -90,7 +90,8 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
-                var Incomes = EntityContext.Incomes.Where(x => x.User_Id == iduser).Sum(x => x.Amount);
+                var Incomes = (EntityContext.Incomes.Where(x => x.User_Id == iduser).Sum(x => x.Amount).HasValue) ? 
+                    EntityContext.Incomes.Where(x => x.User_Id == iduser).Sum(x => x.Amount) : 0M;
                 Response.IsSuccess = true;
                 Response.Message = "Se recuperaron datos";
                 Response.Result = new Income
