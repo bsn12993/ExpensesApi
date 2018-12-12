@@ -91,7 +91,7 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
-                var Expense = EntityContext.Expenses.Where(x => x.User_Id == iduser).ToList();
+                var Expense = EntityContext.Expenses.Include("Category").Where(x => x.User_Id == iduser).ToList();
                 if (Expense != null)
                 {
                     Response.IsSuccess = true;
