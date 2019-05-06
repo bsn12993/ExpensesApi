@@ -28,6 +28,11 @@ namespace Expenses.Data.Services
             return DA_Category.GetCategoryById(idcategory);
         }
 
+        public Response GetCategoryByUser(int iduser)
+        {
+            return DA_Category.GetCategoryByUser(iduser);
+        }
+
         public Response PostCategory(Category category)
         {
             return DA_Category.InsertCategory(category);

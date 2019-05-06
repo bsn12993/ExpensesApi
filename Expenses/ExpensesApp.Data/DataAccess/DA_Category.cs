@@ -25,13 +25,13 @@ namespace Expenses.Data.DataAccess
             try
             {
                 var Categories = EntityContext.Categories.ToList();
-                if (Categories != null)
+                if (Categories != null && Categories.Count > 0) 
                 {
                     Response.IsSuccess = true;
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Categories;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de categorías");
             }
             catch (Exception e)
             {
@@ -53,7 +53,30 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Category;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de categorías");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response GetCategoryByUser(int iduser)
+        {
+            try
+            {
+                var Category = EntityContext.
+                    Categories.Include("User").Where(x => x.User.User_Id == iduser).SingleOrDefault();
+                if (Category != null)
+                {
+                    Response.IsSuccess = true;
+                    Response.Message = "Se recuperaron datos";
+                    Response.Result = Category;
+                }
+                else throw new Exception("No se recuperaron datos de categorías");
             }
             catch (Exception e)
             {

@@ -25,13 +25,13 @@ namespace Expenses.Data.DataAccess
             try
             {
                 var Incomes = EntityContext.Incomes.ToList();
-                if (Incomes != null)
+                if (Incomes != null && Incomes.Count > 0) 
                 {
                     Response.IsSuccess = true;
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Incomes;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de ingresos");
             }
             catch (Exception e)
             {
@@ -53,7 +53,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Incomes;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de ingresos");
             }
             catch (Exception e)
             {
@@ -75,7 +75,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Incomes;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de ingresos");
             }
             catch (Exception e)
             {

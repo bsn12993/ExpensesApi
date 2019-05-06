@@ -43,6 +43,17 @@ namespace Expenses.Api.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
         }
 
+        [HttpGet]
+        [Route("byuser/{id}")]
+        public HttpResponseMessage GetCategoryByUser(int id)
+        {
+            var response = CategoriesServices.GetCategoryByUser(id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+        }
+
         [HttpPost]
         [Route("create")]
         public HttpResponseMessage PostCategory([FromBody] Category category)
@@ -51,7 +62,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
         [HttpPut]
@@ -62,7 +73,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
         [HttpDelete]
@@ -73,7 +84,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
     }
 }

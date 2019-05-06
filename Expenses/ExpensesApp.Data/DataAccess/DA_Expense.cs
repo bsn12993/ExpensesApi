@@ -25,13 +25,13 @@ namespace Expenses.Data.DataAccess
             try
             {
                 var Expenses = EntityContext.Expenses.Include("Category").OrderByDescending(x => x.Date).ToList();
-                if (Expenses != null)
+                if (Expenses != null && Expenses.Count > 0) 
                 {
                     Response.IsSuccess = true;
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Expenses;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de gastos");
             }
             catch (Exception e)
             {
@@ -53,7 +53,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Expenses;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de gastos");
             }
             catch (Exception e)
             {
@@ -76,7 +76,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Expense;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de gastos");
             }
             catch (Exception e)
             {
@@ -98,7 +98,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Expense;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de gastos");
             }
             catch (Exception e)
             {

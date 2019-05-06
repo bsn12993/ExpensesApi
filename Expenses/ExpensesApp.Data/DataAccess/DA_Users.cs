@@ -25,13 +25,13 @@ namespace Expenses.Data.DataAccess
             try
             {
                 var Users = EntityContext.Users.ToList();
-                if (Users != null)
+                if (Users != null && Users.Count > 0) 
                 {
                     Response.IsSuccess = true;
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Users;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de usuarios");
             }
             catch(Exception e)
             {
@@ -55,7 +55,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Users;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de usuario");
             }
             catch (Exception e)
             {
@@ -79,7 +79,7 @@ namespace Expenses.Data.DataAccess
                     Response.Message = "Se recuperaron datos";
                     Response.Result = Users;
                 }
-                else throw new Exception("No se recuperaron datos");
+                else throw new Exception("No se recuperaron datos de usuario");
             }
             catch (Exception e)
             {
