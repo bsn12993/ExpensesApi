@@ -10,9 +10,8 @@ namespace Expenses.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var result = await ApiServices.GetInstance().GetItem<string>("api/users/all");
             return View();
         }
 
