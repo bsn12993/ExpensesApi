@@ -13,7 +13,7 @@ namespace ExpensesApp.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201811201752165_v1"; }
+            get { return "201906181921397_v1"; }
         }
         
         string IMigrationMetadata.Source

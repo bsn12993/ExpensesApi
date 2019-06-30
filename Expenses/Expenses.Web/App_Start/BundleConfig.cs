@@ -21,7 +21,10 @@ namespace Expenses.Web
                         "~/Scripts/template/js/sb-admin-2.min.js",
                         "~/Content/template/vendor/chart.js/Chart.min.js",
                         "~/Scripts/template/js/demo/chart-area-demo.js",
-                        "~/Scripts/template/js/demo/chart-pie-demo.js"));
+                        "~/Scripts/template/js/demo/chart-pie-demo.js",
+                        "~/Content/template/vendor/datatables/jquery.dataTables.min.js",
+                        "~/Content/template/vendor/datatables/dataTables.bootstrap4.min.js",
+                        "~/Scripts/template/js/demo//datatables-demo.js"));
 
             // Utilice la versión de desarrollo de Modernizr para desarrollar y obtener información. De este modo, estará
             // para la producción, use la herramienta de compilación disponible en https://modernizr.com para seleccionar solo las pruebas que necesite.
@@ -36,7 +39,9 @@ namespace Expenses.Web
             //          "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/template/vendor/fontawesome-free/css/all.min.css"));
+                      "~/Content/template/vendor/fontawesome-free/css/all.min.css",
+                      "~/Content/template/css/sb-admin-2.min.css",
+                      "~/Content/template/vendor/datatables/dataTables.bootstrap4.min.css"));
         }
     }
 }

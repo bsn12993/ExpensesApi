@@ -1,5 +1,6 @@
 ﻿using Expenses.Data.EntityModel;
 using Expenses.Data.Services;
+using ExpensesApp.Data.EntityModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,9 +57,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostCategory([FromBody] Category category)
+        public HttpResponseMessage PostCategory([FromBody] Category category, [FromBody] UserCategory userCategory)
         {
-            var response = CategoriesServices.PostCategory(category);
+            var response = CategoriesServices.PostCategory(category, userCategory);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

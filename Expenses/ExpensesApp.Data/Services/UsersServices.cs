@@ -31,7 +31,7 @@ namespace Expenses.Data.Services
 
         public Response GetUserEmailAndPassaword(string email, string password)
         {
-            return DA_Users.GetUserByEmailAndPassword(email.Decrypter(), password.Decrypter());
+            return DA_Users.GetUserByEmailAndPassword(email, password);
         }
 
         public Response PostUser(User user)

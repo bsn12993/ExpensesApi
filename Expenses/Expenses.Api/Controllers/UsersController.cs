@@ -45,7 +45,7 @@ namespace Expenses.Api.Controllers
         }
 
         [HttpGet]
-        [Route("validate/{email}/{password}")]
+        [Route("validate")]
         public HttpResponseMessage GetUserByEmailAndPassword(string email, string password)
         {
             var response = UsersServices.GetUserEmailAndPassaword(email, password);

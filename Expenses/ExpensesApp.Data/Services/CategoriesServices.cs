@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExpensesApp.Data.EntityModel;
 
 namespace Expenses.Data.Services
 {
@@ -33,9 +34,9 @@ namespace Expenses.Data.Services
             return DA_Category.GetCategoryByUser(iduser);
         }
 
-        public Response PostCategory(Category category)
+        public Response PostCategory(Category category, UserCategory userCategory)
         {
-            return DA_Category.InsertCategory(category);
+            return DA_Category.InsertCategory(category, userCategory);
         }
 
         public Response PutCategory(Category category,int idcategory)

@@ -20,10 +20,5 @@ namespace Expenses.Data.EntityModel
         public string Description { get; set; }
         [Column("status")]
         public int Status { get; set; }
-        //[ForeignKey("User")]
-        //public int User_Id { get; set; }
-
-        [Column("iduser")]
-        public User User { get; set; }
     }
 }

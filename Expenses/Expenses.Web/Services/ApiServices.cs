@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,12 +15,20 @@ namespace Expenses.Web.Services
 {
     public class ApiServices : HttpClient
     {
+        private string UrlApi
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["urlApi"].ToString();
+            }
+        }
         #region Constructors
         private ApiServices() : base()
         {
+            
             Timeout = TimeSpan.FromMilliseconds(15000);
             MaxResponseContentBufferSize = 256000;
-            BaseAddress = new Uri("http://192.168.56.1:8585/");
+            BaseAddress = new Uri(UrlApi);
             DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
         #endregion
@@ -35,51 +44,26 @@ namespace Expenses.Web.Services
         #endregion
 
         #region Methods 
-        //public async Task<Response> CheckConnection()
-        //{
-        //    if (!CrossConnectivity.Current.IsConnected)
-        //    {
-        //        return new Response
-        //        {
-        //            IsSuccess = false,
-        //            Message = "Please turn on your internet settings."
-        //        };
-        //    }
-
-        //    var isReachable = await CrossConnectivity.Current.IsReachable("motzcod.es");
-        //    //if (!isReachable)
-        //    //{
-        //    //    return new Response
-        //    //    {
-        //    //        IsSuccess = false,
-        //    //        Message = "check you internet connection."
-        //    //    };
-        //    //}
-
-        //    return new Response
-        //    {
-        //        IsSuccess = true,
-        //        Message = "Ok"
-        //    };
-        //}
+        
         public async Task<Response> GetList<T>(string url)
         {
             try
             {
                 var response = await GetAsync(url);
                 var result = await response.Content.ReadAsStringAsync();
-                var responseData = JsonConvert.DeserializeObject<Response>(result);
-                var data = JsonConvert.DeserializeObject<List<T>>(((JArray)responseData.Result).ToString());
-                responseData.Result = data;
                 if (!response.IsSuccessStatusCode)
                 {
+                    var msg = JsonConvert.DeserializeObject<Response>(result);
                     return new Response
                     {
-                        IsSuccess = false,
-                        Message = responseData.Message,
+                        IsSuccess = msg.IsSuccess,
+                        Message = msg.Message,
                         Result = null
                     };
                 }
+                var responseData = JsonConvert.DeserializeObject<Response>(result);
+                var data = JsonConvert.DeserializeObject<List<T>>(((JArray)responseData.Result).ToString());
+                responseData.Result = data;
                 return responseData;
             }
             catch (OperationCanceledException ex)

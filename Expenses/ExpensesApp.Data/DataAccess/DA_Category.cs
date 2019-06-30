@@ -1,6 +1,7 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.Context;
 using Expenses.Data.EntityModel;
+using ExpensesApp.Data.EntityModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
+                //var Categories = EntityContext.Database.SqlQuery<Category>("exec GetCategories").ToList();
                 var Categories = EntityContext.Categories.ToList();
                 if (Categories != null && Categories.Count > 0) 
                 {
@@ -46,6 +48,7 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
+                //var Category = EntityContext.Database.SqlQuery<Category>("exec GetCategoriesById @idcategory={0}", idcategory).SingleOrDefault();
                 var Category = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
                 if (Category != null)
                 {
@@ -68,9 +71,11 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
-                var Category = EntityContext.
-                    Categories.Include("User").Where(x => x.User.User_Id == iduser).SingleOrDefault();
-                if (Category != null)
+                var Category = EntityContext.UserCategories
+                    .Include("User").Include("Category").Where(x => x.User.User_Id == iduser).ToList();
+                //var Category = EntityContext.
+                //    Categories.Include("User").Where(x => x.User.User_Id == iduser).SingleOrDefault();
+                if (Category != null && Category.Count > 0) 
                 {
                     Response.IsSuccess = true;
                     Response.Message = "Se recuperaron datos";
@@ -87,25 +92,36 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-        public Response InsertCategory(Category category)
-        {
-            try
+        public Response InsertCategory(Category category, UserCategory userCategory)
+        {          
+            using (var transaction = EntityContext.Database.BeginTransaction())
             {
-                EntityContext.Categories.Add(category);
-                EntityContext.SaveChanges();
+                try
+                {
+                    //EntityContext.Database.SqlQuery<Category>("exec PostCategories @name={0}, @description={1}, @status={2}, @iduser={3}", category.Name, category.Description, category.Status, category.User.User_Id);
+                    var idcategory = EntityContext.Categories.Add(category).Category_Id;
+                    userCategory.Category_Id = idcategory;
+                    EntityContext.UserCategories.Add(userCategory);
+                    EntityContext.SaveChanges();
 
-                Response.IsSuccess = true;
-                Response.Message = "Se registro la categoria";
-                Response.Result = null;
+                    Response.IsSuccess = true;
+                    Response.Message = "Se registro la categoria";
+                    Response.Result = null;
+                    transaction.Commit();
+                    return Response;
+                }
+                catch(Exception e)
+                {
+                    Response.IsSuccess = false;
+                    Response.Message = e.Message;
+                    Response.Result = null;
+                    transaction.Rollback();
+                    return Response;
+                }
             }
-            catch (Exception e)
-            {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
-            }
-            return Response;
         }
+           
+        
 
 
         public Response UpdateCategory(Category category, int idcategory)
