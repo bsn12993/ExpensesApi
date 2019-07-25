@@ -64,7 +64,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
 
@@ -73,6 +73,50 @@ namespace Expenses.Api.Controllers
         public HttpResponseMessage PutUser([FromBody] User user, int id)
         {
             var response = UsersServices.PutUser(user, id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+        }
+
+        [HttpPut]
+        [Route("update/name/{id}")]
+        public HttpResponseMessage PutUserName([FromBody] User user, int id)
+        {
+            var response = UsersServices.PutUserName(user.Name, id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+        }
+
+        [HttpPut]
+        [Route("update/lastname/{id}")]
+        public HttpResponseMessage PutUserLastName([FromBody] User user, int id)
+        {
+            var response = UsersServices.PutUserLastName(user.LastName, id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+        }
+
+        [HttpPut]
+        [Route("update/email/{id}")]
+        public HttpResponseMessage PutUserEmail([FromBody] User user, int id)
+        {
+            var response = UsersServices.PutUserEmail(user.Email, id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+        }
+
+        [HttpPut]
+        [Route("update/password/{id}")]
+        public HttpResponseMessage PutUserPassword([FromBody] User user, int id)
+        {
+            var response = UsersServices.PutUserPassword(user.Password, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

@@ -151,6 +151,105 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
+        public Response UpdateUserName(string name, int iduser)
+        {
+            try
+            {
+                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
+                if (userTarget != null)
+                {
+                    userTarget.Name = name;
+                    EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha actualizado el usuario";
+                    Response.Result = null;
+                }
+                else throw new Exception("No se encontro el registro disponible");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response UpdateUserLastName(string lastName, int iduser)
+        {
+            try
+            {
+                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
+                if (userTarget != null)
+                {
+                    userTarget.LastName = lastName;
+                    EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha actualizado el usuario";
+                    Response.Result = null;
+                }
+                else throw new Exception("No se encontro el registro disponible");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response UpdateUserEmail(string email, int iduser)
+        {
+            try
+            {
+                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
+                if (userTarget != null)
+                {
+                    userTarget.Email = email;
+                    EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha actualizado el usuario";
+                    Response.Result = null;
+                }
+                else throw new Exception("No se encontro el registro disponible");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response UpdateUserPassword(string password, int iduser)
+        {
+            try
+            {
+                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
+                if (userTarget != null)
+                {
+                    userTarget.Password = password;
+                    EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha actualizado el usuario";
+                    Response.Result = null;
+                }
+                else throw new Exception("No se encontro el registro disponible");
+            }
+            catch (Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
 
         public Response DeleteUser(int iduser)
         {

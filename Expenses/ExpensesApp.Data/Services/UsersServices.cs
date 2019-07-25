@@ -44,6 +44,26 @@ namespace Expenses.Data.Services
             return DA_Users.UpdateUser(user, iduser);
         }
 
+        public Response PutUserName(string name, int iduser)
+        {
+            return DA_Users.UpdateUserName(name, iduser);
+        }
+
+        public Response PutUserLastName(string lastName, int iduser)
+        {
+            return DA_Users.UpdateUserLastName(lastName, iduser);
+        }
+
+        public Response PutUserEmail(string email, int iduser)
+        {
+            return DA_Users.UpdateUserEmail(email, iduser);
+        }
+
+        public Response PutUserPassword(string password, int iduser)
+        {
+            return DA_Users.UpdateUserPassword(password, iduser);
+        }
+
         public Response DeleteUser(int iduser)
         {
             return DA_Users.DeleteUser(iduser);
