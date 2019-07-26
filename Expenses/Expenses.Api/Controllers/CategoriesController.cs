@@ -57,9 +57,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostCategory([FromBody] Category category, [FromBody] UserCategory userCategory)
+        public HttpResponseMessage PostCategory([FromBody] UserCategory userCategory)
         {
-            var response = CategoriesServices.PostCategory(category, userCategory);
+            var response = CategoriesServices.PostCategory(userCategory);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

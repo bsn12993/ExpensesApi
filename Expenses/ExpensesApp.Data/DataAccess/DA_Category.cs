@@ -92,15 +92,17 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-        public Response InsertCategory(Category category, UserCategory userCategory)
+        public Response InsertCategory(UserCategory userCategory)
         {          
             using (var transaction = EntityContext.Database.BeginTransaction())
             {
                 try
                 {
                     //EntityContext.Database.SqlQuery<Category>("exec PostCategories @name={0}, @description={1}, @status={2}, @iduser={3}", category.Name, category.Description, category.Status, category.User.User_Id);
-                    var idcategory = EntityContext.Categories.Add(category).Category_Id;
+                    var idcategory = EntityContext.Categories.Add(userCategory.Category).Category_Id;
                     userCategory.Category_Id = idcategory;
+                    userCategory.User = null;
+
                     EntityContext.UserCategories.Add(userCategory);
                     EntityContext.SaveChanges();
 

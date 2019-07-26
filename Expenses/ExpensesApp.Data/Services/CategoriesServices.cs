@@ -34,9 +34,9 @@ namespace Expenses.Data.Services
             return DA_Category.GetCategoryByUser(iduser);
         }
 
-        public Response PostCategory(Category category, UserCategory userCategory)
+        public Response PostCategory(UserCategory userCategory)
         {
-            return DA_Category.InsertCategory(category, userCategory);
+            return DA_Category.InsertCategory(userCategory);
         }
 
         public Response PutCategory(Category category,int idcategory)
