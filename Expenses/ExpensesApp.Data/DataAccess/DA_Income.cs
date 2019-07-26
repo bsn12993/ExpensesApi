@@ -141,6 +141,9 @@ namespace Expenses.Data.DataAccess
                     incomeTarget.Amount = income.Amount;
                     incomeTarget.Date = income.Date;
                     EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha actualizado el registro";
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
@@ -163,6 +166,9 @@ namespace Expenses.Data.DataAccess
                 {
                     EntityContext.Incomes.Remove(incomeTarget);
                     EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha eliminado el registro";
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
