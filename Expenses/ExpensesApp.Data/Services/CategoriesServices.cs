@@ -48,5 +48,10 @@ namespace Expenses.Data.Services
         {
             return DA_Category.DeleteCategory(idcategory);
         }
+
+        public Response DeleteUserCategory(int idcategory, int iduser)
+        {
+            return DA_Category.DeleteUserCategory(idcategory, iduser);
+        }
     }
 }

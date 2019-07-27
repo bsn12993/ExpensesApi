@@ -158,6 +158,14 @@ namespace Expenses.Data.DataAccess
         {
             try
             {
+                var categoryExpense = EntityContext.Expenses.Where(x => x.Category_Id == idcategory).Count();
+                if (categoryExpense > 0)
+                {
+                    Response.IsSuccess = true;
+                    Response.Message = "No se puede eliminar la categoria porque existe un gasto perteneciente a esta categoria";
+                    return Response;
+                }
+
                 var category = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
                 if (category != null)
                 {
@@ -169,6 +177,33 @@ namespace Expenses.Data.DataAccess
                     Response.Result = null;
                 }
                 else throw new Exception("No se encontro el registro disponible");
+            }
+            catch(Exception e)
+            {
+                Response.IsSuccess = false;
+                Response.Message = e.Message;
+                Response.Result = null;
+            }
+            return Response;
+        }
+
+        public Response DeleteUserCategory(int idcategory, int iduser)
+        {
+            try
+            {
+                var userCategory = EntityContext.UserCategories.Include("Category").Where(x => x.Category_Id == idcategory && x.User_Id == iduser).SingleOrDefault();
+                if (userCategory != null)
+                {
+                    EntityContext.UserCategories.Remove(userCategory);
+                    EntityContext.Categories.Remove(userCategory.Category);
+                    EntityContext.SaveChanges();
+
+                    Response.IsSuccess = true;
+                    Response.Message = "Se ha eliminado el registro";
+                    return Response;
+                }
+                else
+                    throw new Exception("No se encontro disponible el registro");
             }
             catch(Exception e)
             {

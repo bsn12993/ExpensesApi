@@ -87,5 +87,16 @@ namespace Expenses.Api.Controllers
             else
                 return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
+
+        [HttpDelete]
+        [Route("delete/{id}/{iduser}")]
+        public HttpResponseMessage DeleteUserCategory(int id, int iduser)
+        {
+            var response = CategoriesServices.DeleteCategory(id);
+            if (response.IsSuccess)
+                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
+            else
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+        }
     }
 }

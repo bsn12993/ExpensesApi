@@ -87,7 +87,7 @@ namespace Expenses.Api.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Route("delete/{id}")]
         public HttpResponseMessage DeleteIncome(int id)
         {
