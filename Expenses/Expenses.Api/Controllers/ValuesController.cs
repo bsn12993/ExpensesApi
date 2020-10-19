@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expenses.Api.Security;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,9 +11,10 @@ namespace Expenses.Api.Controllers
     public class ValuesController : ApiController
     {
         // GET api/values
-        public IEnumerable<string> Get()
+        public IHttpActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var token = TokenGenerator.GenerateTokenJwt("123");
+            return Ok(token);
         }
 
         // GET api/values/5

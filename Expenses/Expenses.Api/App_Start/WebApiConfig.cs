@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expenses.Api.Security;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -15,6 +16,7 @@ namespace Expenses.Api
 
             // Rutas de API web
             config.MapHttpAttributeRoutes();
+            config.MessageHandlers.Add(new TokenValidationHandler());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

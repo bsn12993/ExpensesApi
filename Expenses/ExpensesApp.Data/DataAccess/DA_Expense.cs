@@ -1,8 +1,10 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.Context;
 using Expenses.Data.EntityModel;
+using ExpensesApp.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,7 +66,6 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-
         public Response GetExpenceById(int idexpense)
         {
             try
@@ -109,15 +110,19 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-
-        public Response GetTotalExpenceByCategoryAndUser(int idcategory, int iduser)
+        public Response GetTotalExpenceByCategoryAndUser(int iduser)
         {
             try
             {
-                var Expense = EntityContext.Expenses.Where(x => x.Category_Id == idcategory && x.User_Id == iduser).Sum(x => x.Amount);
-                Response.IsSuccess = true;
-                Response.Message = "Se recuperaron datos";
-                Response.Result = Expense;
+                var Expense = EntityContext.Database.SqlQuery<ExpenseCategory>(@"sp_GetCategoryExpensesTotal @iduser", new SqlParameter("@iduser", iduser)).ToList();
+                if (Expense.Count > 0 || Expense != null)
+                {
+                    Response.IsSuccess = true;
+                    Response.Message = "Se recuperaron datos";
+                    Response.Result = Expense;
+                }
+                else
+                    throw new Exception("No se encontraron registros");
             }
             catch (Exception e)
             {
@@ -147,7 +152,6 @@ namespace Expenses.Data.DataAccess
             }
             return Response;
         }
-
 
         public Response UpdateExpence(Expense expense,int idexpense)
         {

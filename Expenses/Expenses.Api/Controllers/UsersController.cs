@@ -52,7 +52,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
         }
 
 
