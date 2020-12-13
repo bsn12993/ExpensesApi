@@ -5,17 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Expenses.Data.DataAccess
+namespace Expenses.Data.Repositories
 {
-    public class DA_Users
+    public class UserRepository
     {
         EntityContext EntityContext { get; set; }
-        Response Response { get; set; }
 
-        public DA_Users()
+        public UserRepository()
         {
             EntityContext = new EntityContext();
-            Response = new Response();
         }
 
         public List<User> GetUsers()
@@ -111,29 +109,17 @@ namespace Expenses.Data.DataAccess
             }
         }
 
-        public Response UpdateUserName(string name, int iduser)
+        public User UpdateUserName(string name, int iduser)
         {
             try
             {
                 var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                if (userTarget != null)
-                {
-                    userTarget.Name = name;
-                    EntityContext.SaveChanges();
-
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha actualizado el usuario";
-                    Response.Result = null;
-                }
-                else throw new Exception("No se encontro el registro disponible");
+                return userTarget;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
         public User UpdateUserLastName(string lastName, int iduser)

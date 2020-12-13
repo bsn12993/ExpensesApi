@@ -5,20 +5,16 @@ using ExpensesApp.Data.EntityModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Expenses.Data.DataAccess
+namespace Expenses.Data.Repositories
 {
-    public class DA_Category
+    public class CategoryRepository
     {
         EntityContext EntityContext { get; set; }
-        Response Response { get; set; }
 
-        public DA_Category()
+        public CategoryRepository()
         {
             EntityContext = new EntityContext();
-            Response = new Response();
         }
 
         public List<Category> GetCategories()

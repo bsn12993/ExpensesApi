@@ -7,17 +7,15 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace Expenses.Data.DataAccess
+namespace Expenses.Data.Repositories
 {
-    public class DA_Expense
+    public class ExpenseRepository
     {
         EntityContext EntityContext { get; set; }
-        Response Response { get; set; }
 
-        public DA_Expense()
+        public ExpenseRepository()
         {
             EntityContext = new EntityContext();
-            Response = new Response();
         }
 
         public List<Expense> GetExpences()

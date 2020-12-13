@@ -14,18 +14,18 @@ namespace Expenses.Api.Controllers
     public class ExpensesController : ApiController
     {
         // GET: Expenses
-        ExpensesServices ExpensesServices { get; set; }
+        private ExpenseService _expenseService { get; set; }
 
         public ExpensesController()
         {
-            ExpensesServices = new ExpensesServices();
+            _expenseService = new ExpenseService();
         }
 
         [HttpGet]
         [Route("all")]
         public HttpResponseMessage GetExpenses()
         {
-            var response = ExpensesServices.GetExpenses();
+            var response = _expenseService.GetExpenses();
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -36,7 +36,7 @@ namespace Expenses.Api.Controllers
         [Route("history/byuser/{id}")]
         public HttpResponseMessage GetExpenses(int id)
         {
-            var response = ExpensesServices.GetExpencesHistory(id);
+            var response = _expenseService.GetExpencesHistory(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -47,7 +47,7 @@ namespace Expenses.Api.Controllers
         [Route("byid/{id}")]
         public HttpResponseMessage GetExpenseById(int id)
         {
-            var response = ExpensesServices.GetExpensesById(id);
+            var response = _expenseService.GetExpensesById(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -58,7 +58,7 @@ namespace Expenses.Api.Controllers
         [Route("byuser/{iduser}")]
         public HttpResponseMessage GetExpenceByUser(int iduser)
         {
-            var response = ExpensesServices.GetExpenceByUser(iduser);
+            var response = _expenseService.GetExpenceByUser(iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -69,7 +69,7 @@ namespace Expenses.Api.Controllers
         [Route("totalcategory/byuser/{iduser}")]
         public HttpResponseMessage GetTotalExpenceByCategoryAndUser(int iduser)
         {
-            var response = ExpensesServices.GetTotalExpenceByCategoryAndUser(iduser);
+            var response = _expenseService.GetTotalExpenceByCategoryAndUser(iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -80,7 +80,7 @@ namespace Expenses.Api.Controllers
         [Route("create")]
         public HttpResponseMessage PostExpense([FromBody] Expense expense)
         {
-            var response = ExpensesServices.PostExpense(expense);
+            var response = _expenseService.PostExpense(expense);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -92,7 +92,7 @@ namespace Expenses.Api.Controllers
         [Route("update/{id}")]
         public HttpResponseMessage PutExpense([FromBody] Expense expense,int id)
         {
-            var response = ExpensesServices.PutExpense(expense, id);
+            var response = _expenseService.PutExpense(expense, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -103,7 +103,7 @@ namespace Expenses.Api.Controllers
         [Route("delete/{id}")]
         public HttpResponseMessage DeleteExpense(int id)
         {
-            var response = ExpensesServices.DeleteExpense(id);
+            var response = _expenseService.DeleteExpense(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

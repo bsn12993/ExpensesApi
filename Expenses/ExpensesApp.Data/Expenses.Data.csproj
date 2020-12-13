@@ -48,10 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\EntityContext.cs" />
-    <Compile Include="DataAccess\DA_Category.cs" />
-    <Compile Include="DataAccess\DA_Expense.cs" />
-    <Compile Include="DataAccess\DA_Income.cs" />
-    <Compile Include="DataAccess\DA_Users.cs" />
+    <Compile Include="Repositories\CategoryRepository.cs" />
+    <Compile Include="Repositories\ExpenseRepository.cs" />
+    <Compile Include="Repositories\IncomeRepository.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="EntityModel\Category.cs" />
     <Compile Include="EntityModel\Expense.cs" />
     <Compile Include="EntityModel\Income.cs" />
@@ -66,10 +66,10 @@
     <Compile Include="Models\ExpenseModel.cs" />
     <Compile Include="Models\IncomeModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\CategoriesServices.cs" />
-    <Compile Include="Services\ExpensesServices.cs" />
-    <Compile Include="Services\IncomesServices.cs" />
-    <Compile Include="Services\UsersServices.cs" />
+    <Compile Include="Services\CategoryService.cs" />
+    <Compile Include="Services\ExpenseService.cs" />
+    <Compile Include="Services\IncomeService.cs" />
+    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

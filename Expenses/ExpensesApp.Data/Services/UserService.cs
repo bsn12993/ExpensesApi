@@ -1,19 +1,19 @@
 ﻿using Expenses.Core.Models;
-using Expenses.Data.DataAccess;
+using Expenses.Data.Repositories;
 using Expenses.Data.EntityModel;
 using ExpensesApp.Core.Helpers;
 using System;
 
 namespace Expenses.Data.Services
 {
-    public class UsersServices
+    public class UserService
     {
-        private DA_Users DA_Users { get; set; }
+        private UserRepository _userRepository { get; set; }
         private Response _response;
 
-        public UsersServices()
+        public UserService()
         {
-            DA_Users = new DA_Users();
+            _userRepository = new UserRepository();
             _response = new Response();
         }
 
@@ -21,7 +21,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var collection = DA_Users.GetUsers();
+                var collection = _userRepository.GetUsers();
                 return _response.GetResponse(true, "ok", collection);
             }
             catch(Exception e)
@@ -34,7 +34,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var user = DA_Users.GetUserById(iduser);
+                var user = _userRepository.GetUserById(iduser);
                 return _response.GetResponse(true, "ok", user);
             }
             catch(Exception e)
@@ -48,7 +48,7 @@ namespace Expenses.Data.Services
             try
             {
                 password = password.Encrypt();
-                var user= DA_Users.GetUserByEmailAndPassword(email, password);
+                var user= _userRepository.GetUserByEmailAndPassword(email, password);
                 return _response.GetResponse(true, "ok", user);
             }
             catch(Exception e)
@@ -63,7 +63,7 @@ namespace Expenses.Data.Services
             {
                 var password_aux = user.Password;
                 user.Password = password_aux.Encrypt();
-                var userCreated = DA_Users.InsertUser(user);
+                var userCreated = _userRepository.InsertUser(user);
                 return _response.GetResponse(true, "ok", userCreated);
             }
             catch(Exception e)
@@ -76,7 +76,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userUpdated = DA_Users.UpdateUser(user, iduser);
+                var userUpdated = _userRepository.UpdateUser(user, iduser);
                 return _response.GetResponse(true, "ok", userUpdated);
             }
             catch(Exception e)
@@ -89,7 +89,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userUpdated=DA_Users.UpdateUserName(name, iduser);
+                var userUpdated=_userRepository.UpdateUserName(name, iduser);
                 return _response.GetResponse(true, "ok", userUpdated);
             }
             catch(Exception e)
@@ -102,7 +102,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userUpdated = DA_Users.UpdateUserLastName(lastName, iduser);
+                var userUpdated = _userRepository.UpdateUserLastName(lastName, iduser);
                 return _response.GetResponse(true, "ok", userUpdated);
             }
             catch(Exception e)
@@ -115,7 +115,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userUpdated = DA_Users.UpdateUserEmail(email, iduser);
+                var userUpdated = _userRepository.UpdateUserEmail(email, iduser);
                 return _response.GetResponse(true, "ok", userUpdated);
             }
             catch(Exception e)
@@ -128,7 +128,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userUpdated= DA_Users.UpdateUserPassword(password, iduser);
+                var userUpdated= _userRepository.UpdateUserPassword(password, iduser);
                 return _response.GetResponse(true, "ok", userUpdated);
             }
             catch(Exception e)
@@ -141,7 +141,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userDeleted= DA_Users.DeleteUser(iduser);
+                var userDeleted= _userRepository.DeleteUser(iduser);
                 return _response.GetResponse(true, "ok", userDeleted);
             }
             catch(Exception e)

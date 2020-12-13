@@ -10,18 +10,18 @@ namespace Expenses.Api.Controllers
     public class UsersController : ApiController
     {
         // GET: Users
-        UsersServices UsersServices { get; set; }
+        private UserService _userService { get; set; }
 
         public UsersController()
         {
-            UsersServices = new UsersServices();
+            _userService = new UserService();
         }
 
         [HttpGet]
         [Route("all")]
         public HttpResponseMessage GetUsers()
         {
-            var response = UsersServices.GetUsers();
+            var response = _userService.GetUsers();
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -32,7 +32,7 @@ namespace Expenses.Api.Controllers
         [Route("byid/{id}")]
         public HttpResponseMessage GetUserBy(int id)
         {
-            var response = UsersServices.GetUserById(id);
+            var response = _userService.GetUserById(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -43,7 +43,7 @@ namespace Expenses.Api.Controllers
         [Route("validate")]
         public HttpResponseMessage GetUserByEmailAndPassword(string email, string password)
         {
-            var response = UsersServices.GetUserEmailAndPassaword(email, password);
+            var response = _userService.GetUserEmailAndPassaword(email, password);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -55,7 +55,7 @@ namespace Expenses.Api.Controllers
         [Route("create")]
         public HttpResponseMessage PostUser([FromBody] User user)
         {
-            var response = UsersServices.PostUser(user);
+            var response = _userService.PostUser(user);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -67,7 +67,7 @@ namespace Expenses.Api.Controllers
         [Route("update/{id}")]
         public HttpResponseMessage PutUser([FromBody] User user, int id)
         {
-            var response = UsersServices.PutUser(user, id);
+            var response = _userService.PutUser(user, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -78,7 +78,7 @@ namespace Expenses.Api.Controllers
         [Route("update/name/{id}")]
         public HttpResponseMessage PutUserName([FromBody] User user, int id)
         {
-            var response = UsersServices.PutUserName(user.Name, id);
+            var response = _userService.PutUserName(user.Name, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -89,7 +89,7 @@ namespace Expenses.Api.Controllers
         [Route("update/lastname/{id}")]
         public HttpResponseMessage PutUserLastName([FromBody] User user, int id)
         {
-            var response = UsersServices.PutUserLastName(user.LastName, id);
+            var response = _userService.PutUserLastName(user.LastName, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -100,7 +100,7 @@ namespace Expenses.Api.Controllers
         [Route("update/email/{id}")]
         public HttpResponseMessage PutUserEmail([FromBody] User user, int id)
         {
-            var response = UsersServices.PutUserEmail(user.Email, id);
+            var response = _userService.PutUserEmail(user.Email, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -111,7 +111,7 @@ namespace Expenses.Api.Controllers
         [Route("update/password/{id}")]
         public HttpResponseMessage PutUserPassword([FromBody] User user, int id)
         {
-            var response = UsersServices.PutUserPassword(user.Password, id);
+            var response = _userService.PutUserPassword(user.Password, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -122,7 +122,7 @@ namespace Expenses.Api.Controllers
         [Route("delete/{id}")]
         public HttpResponseMessage DeleteUser(int id)
         {
-            var response = UsersServices.DeleteUser(id);
+            var response = _userService.DeleteUser(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

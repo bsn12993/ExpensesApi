@@ -1,20 +1,20 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.EntityModel;
-using Expenses.Data.DataAccess;
+using Expenses.Data.Repositories;
 using System;
 using ExpensesApp.Data.Models;
 using System.Collections.Generic;
 
 namespace Expenses.Data.Services
 {
-    public class IncomesServices
+    public class IncomeService
     {
-        private DA_Income DA_Income { get; set; }
+        private IncomeRepository _incomeRepository { get; set; }
         private Response _response;
 
-        public IncomesServices()
+        public IncomeService()
         {
-            DA_Income = new DA_Income();
+            _incomeRepository = new IncomeRepository();
             _response = new Response();
         }
 
@@ -22,7 +22,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var collection = DA_Income.GetIncomes();
+                var collection = _incomeRepository.GetIncomes();
                 var collection_aux = new List<IncomeModel>();
                 foreach(var item in collection)
                 {
@@ -46,7 +46,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var collection = DA_Income.GetIncomesByUser(iduser);
+                var collection = _incomeRepository.GetIncomesByUser(iduser);
                 var collection_aux = new List<IncomeModel>();
                 foreach (var item in collection)
                 {
@@ -70,7 +70,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var item = DA_Income.GetIncomeById(idincome);
+                var item = _incomeRepository.GetIncomeById(idincome);
                 return _response.GetResponse(true, "ok", item);
             }
             catch(Exception e)
@@ -83,7 +83,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var total = DA_Income.GetIncomesTotal(iduser);
+                var total = _incomeRepository.GetIncomesTotal(iduser);
                 return _response.GetResponse(true, "ok", total);
             }
             catch(Exception e)
@@ -96,7 +96,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var item = DA_Income.InsertIncome(income);
+                var item = _incomeRepository.InsertIncome(income);
                 return _response.GetResponse(true, "ok", item);
             }
             catch(Exception e)
@@ -109,7 +109,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var item = DA_Income.UpdateIncome(income, idincome);
+                var item = _incomeRepository.UpdateIncome(income, idincome);
                 return _response.GetResponse(true, "ok", item);
             }
             catch(Exception e)
@@ -122,7 +122,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var item = DA_Income.DeleteIncome(idincome);
+                var item = _incomeRepository.DeleteIncome(idincome);
                 return _response.GetResponse(true, "ok", item);
             }
             catch(Exception e)

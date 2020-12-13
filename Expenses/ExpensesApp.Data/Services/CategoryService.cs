@@ -1,6 +1,6 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.EntityModel;
-using Expenses.Data.DataAccess;
+using Expenses.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using ExpensesApp.Data.EntityModel;
@@ -8,14 +8,14 @@ using ExpensesApp.Data.Models;
 
 namespace Expenses.Data.Services
 {
-    public class CategoriesServices
+    public class CategoryService
     {
-        private DA_Category DA_Category { get; set; }
+        private CategoryRepository _categoryRepository { get; set; }
         private Response _response;
 
-        public CategoriesServices()
+        public CategoryService()
         {
-            DA_Category = new DA_Category();
+            _categoryRepository = new CategoryRepository();
             _response = new Response();
         }
 
@@ -23,7 +23,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var collection = DA_Category.GetCategories();
+                var collection = _categoryRepository.GetCategories();
                 return _response.GetResponse(true, "ok", collection);
             }
             catch(Exception e)
@@ -36,7 +36,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var category = DA_Category.GetCategoryById(idcategory);
+                var category = _categoryRepository.GetCategoryById(idcategory);
                 return _response.GetResponse(true, "ok", category);
             }
             catch(Exception e)
@@ -49,7 +49,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var userCategories = DA_Category.GetCategoryByUser(iduser);
+                var userCategories = _categoryRepository.GetCategoryByUser(iduser);
                 var collection = new List<CategoryModel>();
                 foreach (var item in userCategories)
                 {
@@ -83,7 +83,7 @@ namespace Expenses.Data.Services
                     User_Id = categoryModel.UserId,
                     Category = category
                 };
-                var newCategory = DA_Category.InsertCategory(userCategory);
+                var newCategory = _categoryRepository.InsertCategory(userCategory);
                 return _response.GetResponse(true, "ok", newCategory);
 
             }
@@ -97,10 +97,10 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var currentItem = DA_Category.GetCategoryById(idcategory);
+                var currentItem = _categoryRepository.GetCategoryById(idcategory);
                 currentItem.Name = categoryModel.Name;
                 currentItem.Description = categoryModel.Description;
-                var updateItem = DA_Category.UpdateCategory(currentItem, idcategory);
+                var updateItem = _categoryRepository.UpdateCategory(currentItem, idcategory);
                 return _response.GetResponse(true, "ok", updateItem);
             }
             catch(Exception e)
@@ -113,7 +113,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var categoryDeleted=DA_Category.DeleteCategory(idcategory);
+                var categoryDeleted=_categoryRepository.DeleteCategory(idcategory);
                 return _response.GetResponse(true, "ok", categoryDeleted);
             }
             catch(Exception e)
@@ -126,7 +126,7 @@ namespace Expenses.Data.Services
         {
             try
             {
-                var categoryDeleted = DA_Category.DeleteUserCategory(idcategory, iduser);
+                var categoryDeleted = _categoryRepository.DeleteUserCategory(idcategory, iduser);
                 return _response.GetResponse(true, "ok", categoryDeleted);
             }
             catch(Exception e)

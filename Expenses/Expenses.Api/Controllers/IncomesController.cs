@@ -14,18 +14,18 @@ namespace Expenses.Api.Controllers
     public class IncomesController : ApiController
     {
         // GET: Incomes
-        IncomesServices IncomesServices { get; set; }
+        private IncomeService _incomeService { get; set; }
 
         public IncomesController()
         {
-            IncomesServices = new IncomesServices();
+            _incomeService = new IncomeService();
         }
 
         [HttpGet]
         [Route("all")]
         public HttpResponseMessage GetIncomes()
         {
-            var response = IncomesServices.GetIncomes();
+            var response = _incomeService.GetIncomes();
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -36,7 +36,7 @@ namespace Expenses.Api.Controllers
         [Route("history/byuser/{id}")]
         public HttpResponseMessage GetIncomesByUser(int id)
         {
-            var response = IncomesServices.GetIncomesByUser(id);
+            var response = _incomeService.GetIncomesByUser(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -47,7 +47,7 @@ namespace Expenses.Api.Controllers
         [Route("byid/{id}")]
         public HttpResponseMessage GetIncomeById(int id)
         {
-            var response = IncomesServices.GetIncomeById(id);
+            var response = _incomeService.GetIncomeById(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -58,7 +58,7 @@ namespace Expenses.Api.Controllers
         [Route("total/byuser/{iduser}")]
         public HttpResponseMessage GetIncomeByUser(int iduser)
         {
-            var response = IncomesServices.GetIncomesTotal(iduser);
+            var response = _incomeService.GetIncomesTotal(iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -69,7 +69,7 @@ namespace Expenses.Api.Controllers
         [Route("create")]
         public HttpResponseMessage PostIncome([FromBody] Income income)
         {
-            var response = IncomesServices.PostIncome(income);
+            var response = _incomeService.PostIncome(income);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -80,7 +80,7 @@ namespace Expenses.Api.Controllers
         [Route("update/{id}")]
         public HttpResponseMessage PutIncome([FromBody] Income income, int id)
         {
-            var response = IncomesServices.PutIncome(income, id);
+            var response = _incomeService.PutIncome(income, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -91,7 +91,7 @@ namespace Expenses.Api.Controllers
         [Route("delete/{id}")]
         public HttpResponseMessage DeleteIncome(int id)
         {
-            var response = IncomesServices.DeleteIncome(id);
+            var response = _incomeService.DeleteIncome(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

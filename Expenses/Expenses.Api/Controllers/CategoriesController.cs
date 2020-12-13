@@ -10,18 +10,18 @@ namespace Expenses.Api.Controllers
     public class CategoriesController : ApiController
     {
         // GET: Categories
-        CategoriesServices CategoriesServices { get; set; }
+        private CategoryService _categoryService { get; set; }
 
         public CategoriesController()
         {
-            CategoriesServices = new CategoriesServices();
+            _categoryService = new CategoryService();
         }
 
         [HttpGet]
         [Route("all")]
         public HttpResponseMessage GetCategories()
         {
-            var response = CategoriesServices.GetCategories();
+            var response = _categoryService.GetCategories();
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -32,7 +32,7 @@ namespace Expenses.Api.Controllers
         [Route("byid/{id}")]
         public HttpResponseMessage GetCategoryById(int id)
         {
-            var response = CategoriesServices.GetCategoryById(id);
+            var response = _categoryService.GetCategoryById(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -43,7 +43,7 @@ namespace Expenses.Api.Controllers
         [Route("byuser/{id}")]
         public HttpResponseMessage GetCategoryByUser(int id)
         {
-            var response = CategoriesServices.GetCategoryByUser(id);
+            var response = _categoryService.GetCategoryByUser(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -54,7 +54,7 @@ namespace Expenses.Api.Controllers
         [Route("create")]
         public HttpResponseMessage PostCategory([FromBody] CategoryModel categoryModel)
         {
-            var response = CategoriesServices.PostCategory(categoryModel);
+            var response = _categoryService.PostCategory(categoryModel);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -65,7 +65,7 @@ namespace Expenses.Api.Controllers
         [Route("update/{id}")]
         public HttpResponseMessage PutCategory([FromBody] CategoryModel categoryModel, int id)
         {
-            var response = CategoriesServices.PutCategory(categoryModel, id);
+            var response = _categoryService.PutCategory(categoryModel, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -76,7 +76,7 @@ namespace Expenses.Api.Controllers
         [Route("delete/{id}")]
         public HttpResponseMessage DeleteCategory(int id)
         {
-            var response = CategoriesServices.DeleteCategory(id);
+            var response = _categoryService.DeleteCategory(id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -87,7 +87,7 @@ namespace Expenses.Api.Controllers
         [Route("delete/{id}/{iduser}")]
         public HttpResponseMessage DeleteUserCategory(int id, int iduser)
         {
-            var response = CategoriesServices.DeleteUserCategory(id, iduser);
+            var response = _categoryService.DeleteUserCategory(id, iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

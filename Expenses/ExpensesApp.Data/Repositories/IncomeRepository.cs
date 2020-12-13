@@ -5,17 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Expenses.Data.DataAccess
+namespace Expenses.Data.Repositories
 {
-    public class DA_Income
+    public class IncomeRepository
     {
         EntityContext EntityContext { get; set; }
-        Response Response { get; set; }
 
-        public DA_Income()
+        public IncomeRepository()
         {
             EntityContext = new EntityContext();
-            Response = new Response();
         }
 
         public List<Income> GetIncomes()
