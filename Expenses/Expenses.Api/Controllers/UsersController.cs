@@ -1,12 +1,7 @@
 ﻿using Expenses.Data.EntityModel;
 using Expenses.Data.Services;
-using ExpensesApp.Core.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 
 namespace Expenses.Api.Controllers
@@ -52,7 +47,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
 

@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expenses.Data.DataAccess
 {
@@ -22,187 +20,127 @@ namespace Expenses.Data.DataAccess
             Response = new Response();
         }
 
-        public Response GetExpences()
+        public List<Expense> GetExpences()
         {
             try
             {
-                var Expenses = EntityContext.Expenses.Include("Category").OrderByDescending(x => x.Date).ToList();
-                if (Expenses != null && Expenses.Count > 0) 
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Expenses;
-                }
-                else throw new Exception("No se recuperaron datos de gastos");
+                var expenses = EntityContext.Expenses
+                    .Include("Category")
+                    .OrderByDescending(x => x.Date)
+                    .ToList();
+                return expenses;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response GetExpencesHistory(int iduser)
+        public List<Expense> GetExpencesHistory(int iduser)
         {
             try
             {
-                var Expenses = EntityContext.Expenses.Include("Category").Where(x => x.User_Id == iduser).ToList();
-                if (Expenses != null)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Expenses;
-                }
-                else throw new Exception("No se recuperaron datos de gastos");
+                var expenses = EntityContext.Expenses
+                    .Include("Category")
+                    .Where(x => x.User_Id == iduser)
+                    .ToList();
+                return expenses;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response GetExpenceById(int idexpense)
+        public Expense GetExpenceById(int idexpense)
         {
             try
             {
-                var Expense = EntityContext.Expenses.Where(x => x.Expense_Id == idexpense).SingleOrDefault();
-                if (Expense != null)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Expense;
-                }
-                else throw new Exception("No se recuperaron datos de gastos");
+                var expense = EntityContext.Expenses
+                    .Where(x => x.Expense_Id == idexpense)
+                    .SingleOrDefault();
+                return expense;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response GetExpenceByUser(int iduser)
+        public List<Expense> GetExpenceByUser(int iduser)
         {
             try
             {
-                var Expense = EntityContext.Expenses.Include("Category").Where(x => x.User_Id == iduser).ToList();
-                if (Expense != null)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Expense;
-                }
-                else throw new Exception("No se recuperaron datos de gastos");
+                var expenses = EntityContext.Expenses
+                    .Include("Category")
+                    .Where(x => x.User_Id == iduser)
+                    .ToList();
+                return expenses;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response GetTotalExpenceByCategoryAndUser(int iduser)
+        public List<ExpenseCategory> GetTotalExpenceByCategoryAndUser(int iduser)
         {
             try
             {
-                var Expense = EntityContext.Database.SqlQuery<ExpenseCategory>(@"sp_GetCategoryExpensesTotal @iduser", new SqlParameter("@iduser", iduser)).ToList();
-                if (Expense.Count > 0 || Expense != null)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Expense;
-                }
-                else
-                    throw new Exception("No se encontraron registros");
+                var expenses = EntityContext.Database
+                    .SqlQuery<ExpenseCategory>(@"sp_GetCategoryExpensesTotal @iduser", new SqlParameter("@iduser", iduser))
+                    .ToList();
+                return expenses;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response InsertExpence(Expense expense)
+        public Expense InsertExpence(Expense expense)
         {
             try
             {
                 EntityContext.Expenses.Add(expense);
                 EntityContext.SaveChanges();
 
-                Response.IsSuccess = true;
-                Response.Message = "se ha registrado el gasto";
-                Response.Result = null;
+                return expense;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response UpdateExpence(Expense expense,int idexpense)
+        public Expense UpdateExpence(Expense expense,int idexpense)
         {
             try
             {
-                var expenseTarget = EntityContext.Expenses.Where(x => x.Expense_Id == idexpense).SingleOrDefault();
-                if (expenseTarget != null)
-                {
-                    expenseTarget.Amount = expense.Amount;
-                    expenseTarget.Category_Id = expense.Category_Id;
-                    expenseTarget.Date = expense.Date;
-                    EntityContext.SaveChanges();
-
-                    Response.IsSuccess = true;
-                    Response.Message = "se ha actualizado el gasto";
-                    Response.Result = null;
-                }
-                else throw new Exception("No se encontro el registro disponible");
+                var expenseTarget = EntityContext.Expenses
+                    .Where(x => x.Expense_Id == idexpense)
+                    .SingleOrDefault();
+                return expenseTarget;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response DeleteExpence(int idexpense)
+        public Expense DeleteExpence(int idexpense)
         {
             try
             {
-                var expenseTarget = EntityContext.Expenses.Where(x => x.Expense_Id == idexpense).SingleOrDefault();
-                if (expenseTarget != null)
-                {
-                    EntityContext.Expenses.Remove(expenseTarget);
-                    EntityContext.SaveChanges();
-
-                    Response.IsSuccess = true;
-                    Response.Message = "se ha eliminado el gasto";
-                    Response.Result = null;
-                }
-                else throw new Exception("No se encontro el registro disponible");
+                var expenseTarget = EntityContext.Expenses
+                    .Where(x => x.Expense_Id == idexpense)
+                    .SingleOrDefault();
+                return expenseTarget;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
     }
 }

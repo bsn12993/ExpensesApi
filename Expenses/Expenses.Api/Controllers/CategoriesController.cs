@@ -1,12 +1,7 @@
-﻿using Expenses.Data.EntityModel;
-using Expenses.Data.Services;
-using ExpensesApp.Data.EntityModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Expenses.Data.Services;
+using ExpensesApp.Data.Models;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 
 namespace Expenses.Api.Controllers
@@ -30,7 +25,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.NotFound, response.Message, "application/json");
         }
 
         [HttpGet]
@@ -41,7 +36,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.NotFound, response.Message, "application/json");
         }
 
         [HttpGet]
@@ -52,29 +47,29 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.NotFound, response.Message, "application/json");
         }
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostCategory([FromBody] UserCategory userCategory)
+        public HttpResponseMessage PostCategory([FromBody] CategoryModel categoryModel)
         {
-            var response = CategoriesServices.PostCategory(userCategory);
+            var response = CategoriesServices.PostCategory(categoryModel);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpPut]
         [Route("update/{id}")]
-        public HttpResponseMessage PutCategory([FromBody] Category category, int id)
+        public HttpResponseMessage PutCategory([FromBody] CategoryModel categoryModel, int id)
         {
-            var response = CategoriesServices.PutCategory(category, id);
+            var response = CategoriesServices.PutCategory(categoryModel, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpDelete]
@@ -85,18 +80,18 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpDelete]
         [Route("delete/{id}/{iduser}")]
         public HttpResponseMessage DeleteUserCategory(int id, int iduser)
         {
-            var response = CategoriesServices.DeleteCategory(id);
+            var response = CategoriesServices.DeleteUserCategory(id, iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
     }
 }

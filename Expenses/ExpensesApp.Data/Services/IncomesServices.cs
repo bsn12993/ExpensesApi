@@ -2,55 +2,133 @@
 using Expenses.Data.EntityModel;
 using Expenses.Data.DataAccess;
 using System;
+using ExpensesApp.Data.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expenses.Data.Services
 {
     public class IncomesServices
     {
-        DA_Income DA_Income { get; set; }
+        private DA_Income DA_Income { get; set; }
+        private Response _response;
 
         public IncomesServices()
         {
             DA_Income = new DA_Income();
+            _response = new Response();
         }
 
         public Response GetIncomes()
         {
-            return DA_Income.GetIncomes();
+            try
+            {
+                var collection = DA_Income.GetIncomes();
+                var collection_aux = new List<IncomeModel>();
+                foreach(var item in collection)
+                {
+                    var income = new IncomeModel
+                    {
+                        Id = item.Income_Id,
+                        Date = item.Date,
+                        Amount = item.Amount
+                    };
+                    collection_aux.Add(income);
+                }
+                return _response.GetResponse(true, "ok", collection_aux);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetIncomesByUser(int iduser)
         {
-            return DA_Income.GetIncomesByUser(iduser);
+            try
+            {
+                var collection = DA_Income.GetIncomesByUser(iduser);
+                var collection_aux = new List<IncomeModel>();
+                foreach (var item in collection)
+                {
+                    var income = new IncomeModel
+                    {
+                        Id = item.Income_Id,
+                        Date = item.Date,
+                        Amount = item.Amount
+                    };
+                    collection_aux.Add(income);
+                }
+                return _response.GetResponse(true, "ok", collection_aux);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetIncomeById(int idincome)
         {
-            return DA_Income.GetIncomeById(idincome);
+            try
+            {
+                var item = DA_Income.GetIncomeById(idincome);
+                return _response.GetResponse(true, "ok", item);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetIncomesTotal(int iduser)
         {
-            return DA_Income.GetIncomesTotal(iduser);
+            try
+            {
+                var total = DA_Income.GetIncomesTotal(iduser);
+                return _response.GetResponse(true, "ok", total);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PostIncome(Income income)
         {
-            return DA_Income.InsertIncome(income);
+            try
+            {
+                var item = DA_Income.InsertIncome(income);
+                return _response.GetResponse(true, "ok", item);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutIncome(Income income, int idincome)
         {
-            return DA_Income.UpdateIncome(income, idincome);
+            try
+            {
+                var item = DA_Income.UpdateIncome(income, idincome);
+                return _response.GetResponse(true, "ok", item);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response DeleteIncome(int idincome)
         {
-            return DA_Income.DeleteIncome(idincome);
+            try
+            {
+                var item = DA_Income.DeleteIncome(idincome);
+                return _response.GetResponse(true, "ok", item);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
     }
 }

@@ -4,8 +4,6 @@ using Expenses.Data.EntityModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expenses.Data.DataAccess
 {
@@ -20,114 +18,81 @@ namespace Expenses.Data.DataAccess
             Response = new Response();
         }
 
-        public Response GetUsers()
+        public List<User> GetUsers()
         {
             try
             {
-                var Users = EntityContext.Users.ToList();
-                if (Users != null && Users.Count > 0) 
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Users;
-                }
-                else throw new Exception("No se recuperaron datos de usuarios");
+                var users = EntityContext.Users.ToList();
+                return users;
             }
             catch(Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-
-
-        public Response GetUserById(int iduser)
+        public User GetUserById(int iduser)
         {
             try
             {
-                var Users = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                if (Users != null)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Users;
-                }
-                else throw new Exception("No se recuperaron datos de usuario");
+                var user = EntityContext.Users
+                    .Where(x => x.User_Id == iduser)
+                    .SingleOrDefault();
+                return user;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
 
-
-        public Response GetUserByEmailAndPassword(string email, string password)
+        public User GetUserByEmailAndPassword(string email, string password)
         {
             try
             {
-                var Users = EntityContext.Users.Where(x => x.Email.Equals(email) && x.Password.Equals(password)).SingleOrDefault();
-                if (Users != null)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Users;
-                }
-                else throw new Exception("No se recuperaron datos de usuario");
+                var user = EntityContext.Users
+                    .Where(x => x.Email.Equals(email) && x.Password.Equals(password))
+                    .SingleOrDefault();
+                return user;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-
-
-
-        public Response InsertUser(User user)
+        public User InsertUser(User user)
         {
             try
             {
-                var validateUser = EntityContext.Users.Where(x => x.Email.Equals(user.Email) && x.Password.Equals(user.Password)).LongCount();
+                var validateUser = EntityContext.Users
+                    .Where(x => x.Email.Equals(user.Email) && x.Password.Equals(user.Password))
+                    .LongCount();
                 if (validateUser == 0)
                 {
                     EntityContext.Users.Add(user);
                     EntityContext.SaveChanges();
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha registrado un nuevo usuario";
-                    Response.Result = null;
+                    return user;
                 }
                 else
                 {
-                    Response.IsSuccess = false;
-                    Response.Message = "Ya existe un usuario con el mismo correo";
-                    Response.Result = null;
+                    throw new Exception("Ya existe un usuario con el mismo correo");
                 }
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-
-        public Response UpdateUser(User user, int iduser)
+        public User UpdateUser(User user, int iduser)
         {
             try
             {
-                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
+                var userTarget = EntityContext.Users
+                    .Where(x => x.User_Id == iduser)
+                    .SingleOrDefault();
                 if (userTarget != null)
                 {
                     userTarget.Email = user.Email;
@@ -136,19 +101,14 @@ namespace Expenses.Data.DataAccess
                     userTarget.Password = user.Password;
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha actualizado el usuario";
-                    Response.Result = null;
+                    return user;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
         public Response UpdateUserName(string name, int iduser)
@@ -176,7 +136,7 @@ namespace Expenses.Data.DataAccess
             return Response;
         }
 
-        public Response UpdateUserLastName(string lastName, int iduser)
+        public User UpdateUserLastName(string lastName, int iduser)
         {
             try
             {
@@ -186,22 +146,17 @@ namespace Expenses.Data.DataAccess
                     userTarget.LastName = lastName;
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha actualizado el usuario";
-                    Response.Result = null;
+                    return userTarget;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response UpdateUserEmail(string email, int iduser)
+        public User UpdateUserEmail(string email, int iduser)
         {
             try
             {
@@ -211,22 +166,17 @@ namespace Expenses.Data.DataAccess
                     userTarget.Email = email;
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha actualizado el usuario";
-                    Response.Result = null;
+                    return userTarget;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response UpdateUserPassword(string password, int iduser)
+        public User UpdateUserPassword(string password, int iduser)
         {
             try
             {
@@ -236,22 +186,17 @@ namespace Expenses.Data.DataAccess
                     userTarget.Password = password;
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha actualizado el usuario";
-                    Response.Result = null;
+                    return userTarget;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response DeleteUser(int iduser)
+        public User DeleteUser(int iduser)
         {
             try
             {
@@ -261,19 +206,14 @@ namespace Expenses.Data.DataAccess
                     EntityContext.Users.Remove(userTarget);
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha eliminado el usuario";
-                    Response.Result = null;
+                    return userTarget;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
     }

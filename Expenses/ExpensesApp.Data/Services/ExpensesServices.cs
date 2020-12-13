@@ -3,59 +3,162 @@ using Expenses.Data.EntityModel;
 using Expenses.Data.DataAccess;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ExpensesApp.Data.Models;
 
 namespace Expenses.Data.Services
 {
     public class ExpensesServices
     {
-        DA_Expense DA_Expense { get; set; }
+        private DA_Expense DA_Expense { get; set; }
+        private Response _response;
 
         public ExpensesServices()
         {
             DA_Expense = new DA_Expense();
+            _response = new Response();
         }
 
         public Response GetExpenses()
         {
-            return DA_Expense.GetExpences();
+            try
+            {
+                var collection = DA_Expense.GetExpences();
+                var collection_aux = new List<ExpenseModel>();
+                foreach(var item in collection)
+                {
+                    var expense = new ExpenseModel
+                    {
+                        Id = item.Expense_Id,
+                        Date = item.Date,
+                        Amount = item.Amount,
+                        Category = item.Category.Name,
+                        Description = item.Category.Description
+                    };
+                    collection_aux.Add(expense);
+                }
+                return _response.GetResponse(true, "ok", collection_aux);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetExpencesHistory(int iduser)
         {
-            return DA_Expense.GetExpencesHistory(iduser);
+            try
+            {
+                var collection = DA_Expense.GetExpencesHistory(iduser);
+                var collection_aux = new List<ExpenseModel>();
+                foreach (var item in collection)
+                {
+                    var expense = new ExpenseModel
+                    {
+                        Id = item.Expense_Id,
+                        Date = item.Date,
+                        Amount = item.Amount,
+                        Category = item.Category.Name,
+                        Description = item.Category.Description
+                    };
+                    collection_aux.Add(expense);
+                }
+                return _response.GetResponse(true, "ok", collection_aux);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetExpensesById(int idexpense)
         {
-            return DA_Expense.GetExpenceById(idexpense);
+            try
+            {
+                var item = DA_Expense.GetExpenceById(idexpense);
+                return _response.GetResponse(true, "ok", item);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetExpenceByUser(int iduser)
         {
-            return DA_Expense.GetExpenceByUser(iduser);
+            try
+            {
+                var collection = DA_Expense.GetExpenceByUser(iduser);
+                var collection_aux = new List<ExpenseModel>();
+                foreach (var item in collection)
+                {
+                    var expense = new ExpenseModel
+                    {
+                        Id = item.Expense_Id,
+                        Date = item.Date,
+                        Amount = item.Amount,
+                        Category = item.Category.Name,
+                        Description = item.Category.Description
+                    };
+                    collection_aux.Add(expense);
+                }
+                return _response.GetResponse(true, "ok", collection_aux);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetTotalExpenceByCategoryAndUser(int iduser)
         {
-            return DA_Expense.GetTotalExpenceByCategoryAndUser(iduser);
+            try
+            {
+                var collection = DA_Expense.GetTotalExpenceByCategoryAndUser(iduser);
+                return _response.GetResponse(true, "ok", collection);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PostExpense(Expense expense)
         {
-            return DA_Expense.InsertExpence(expense);
+            try
+            {
+                var expenseCreated = DA_Expense.InsertExpence(expense);
+                return _response.GetResponse(true, "ok", expenseCreated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutExpense(Expense expense,int idexpense)
         {
-            return DA_Expense.UpdateExpence(expense, idexpense);
+            try
+            {
+                var expenseUpdated = DA_Expense.UpdateExpence(expense, idexpense);
+                return _response.GetResponse(true, "ok", expenseUpdated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response DeleteExpense(int idexpense)
         {
-            return DA_Expense.DeleteExpence(idexpense);
+            try
+            {
+                var expenseDeleted = DA_Expense.DeleteExpence(idexpense);
+                return _response.GetResponse(true, "ok", expenseDeleted);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
     }
 }

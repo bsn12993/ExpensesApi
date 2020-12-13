@@ -3,70 +3,151 @@ using Expenses.Data.DataAccess;
 using Expenses.Data.EntityModel;
 using ExpensesApp.Core.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expenses.Data.Services
 {
     public class UsersServices
     {
-        DA_Users DA_Users { get; set; }
+        private DA_Users DA_Users { get; set; }
+        private Response _response;
 
         public UsersServices()
         {
             DA_Users = new DA_Users();
+            _response = new Response();
         }
 
         public Response GetUsers()
         {
-            return DA_Users.GetUsers();
+            try
+            {
+                var collection = DA_Users.GetUsers();
+                return _response.GetResponse(true, "ok", collection);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetUserById(int iduser)
         {
-            return DA_Users.GetUserById(iduser);
+            try
+            {
+                var user = DA_Users.GetUserById(iduser);
+                return _response.GetResponse(true, "ok", user);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response GetUserEmailAndPassaword(string email, string password)
         {
-            return DA_Users.GetUserByEmailAndPassword(email, password);
+            try
+            {
+                password = password.Encrypt();
+                var user= DA_Users.GetUserByEmailAndPassword(email, password);
+                return _response.GetResponse(true, "ok", user);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PostUser(User user)
         {
-            return DA_Users.InsertUser(user);
+            try
+            {
+                var password_aux = user.Password;
+                user.Password = password_aux.Encrypt();
+                var userCreated = DA_Users.InsertUser(user);
+                return _response.GetResponse(true, "ok", userCreated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutUser(User user,int iduser)
         {
-            return DA_Users.UpdateUser(user, iduser);
+            try
+            {
+                var userUpdated = DA_Users.UpdateUser(user, iduser);
+                return _response.GetResponse(true, "ok", userUpdated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutUserName(string name, int iduser)
         {
-            return DA_Users.UpdateUserName(name, iduser);
+            try
+            {
+                var userUpdated=DA_Users.UpdateUserName(name, iduser);
+                return _response.GetResponse(true, "ok", userUpdated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutUserLastName(string lastName, int iduser)
         {
-            return DA_Users.UpdateUserLastName(lastName, iduser);
+            try
+            {
+                var userUpdated = DA_Users.UpdateUserLastName(lastName, iduser);
+                return _response.GetResponse(true, "ok", userUpdated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutUserEmail(string email, int iduser)
         {
-            return DA_Users.UpdateUserEmail(email, iduser);
+            try
+            {
+                var userUpdated = DA_Users.UpdateUserEmail(email, iduser);
+                return _response.GetResponse(true, "ok", userUpdated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response PutUserPassword(string password, int iduser)
         {
-            return DA_Users.UpdateUserPassword(password, iduser);
+            try
+            {
+                var userUpdated= DA_Users.UpdateUserPassword(password, iduser);
+                return _response.GetResponse(true, "ok", userUpdated);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
 
         public Response DeleteUser(int iduser)
         {
-            return DA_Users.DeleteUser(iduser);
+            try
+            {
+                var userDeleted= DA_Users.DeleteUser(iduser);
+                return _response.GetResponse(true, "ok", userDeleted);
+            }
+            catch(Exception e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
         }
     }
 }

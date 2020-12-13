@@ -21,104 +21,71 @@ namespace Expenses.Data.DataAccess
             Response = new Response();
         }
 
-        public Response GetCategories()
+        public List<Category> GetCategories()
         {
             try
             {
-                //var Categories = EntityContext.Database.SqlQuery<Category>("exec GetCategories").ToList();
                 var Categories = EntityContext.Categories.ToList();
-                if (Categories != null && Categories.Count > 0) 
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Categories;
-                }
-                else throw new Exception("No se recuperaron datos de categorías");
+                return Categories;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response GetCategoryById(int idcategory)
+        public Category GetCategoryById(int idcategory)
         {
             try
             {
-                //var Category = EntityContext.Database.SqlQuery<Category>("exec GetCategoriesById @idcategory={0}", idcategory).SingleOrDefault();
                 var Category = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
                 if (Category != null)
                 {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Category;
+                    return Category;
                 }
                 else throw new Exception("No se recuperaron datos de categorías");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response GetCategoryByUser(int iduser)
+        public List<UserCategory> GetCategoryByUser(int iduser)
         {
             try
             {
-                var Category = EntityContext.UserCategories
+                var userCategories = EntityContext.UserCategories
                     .Include("User").Include("Category").Where(x => x.User.User_Id == iduser).ToList();
                 //var Category = EntityContext.
                 //    Categories.Include("User").Where(x => x.User.User_Id == iduser).SingleOrDefault();
-                if (Category != null && Category.Count > 0) 
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "Se recuperaron datos";
-                    Response.Result = Category;
-                }
-                else throw new Exception("No se recuperaron datos de categorías");
+                return userCategories;
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response InsertCategory(UserCategory userCategory)
+        public Category InsertCategory(UserCategory userCategory)
         {          
             using (var transaction = EntityContext.Database.BeginTransaction())
             {
                 try
                 {
-                    //EntityContext.Database.SqlQuery<Category>("exec PostCategories @name={0}, @description={1}, @status={2}, @iduser={3}", category.Name, category.Description, category.Status, category.User.User_Id);
-                    var idcategory = EntityContext.Categories.Add(userCategory.Category).Category_Id;
-                    userCategory.Category_Id = idcategory;
-                    userCategory.User = null;
+                    EntityContext.Categories.Add(userCategory.Category);
+                    EntityContext.SaveChanges();
+                    userCategory.Category_Id = userCategory.Category.Category_Id;
 
                     EntityContext.UserCategories.Add(userCategory);
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se registro la categoria";
-                    Response.Result = null;
                     transaction.Commit();
-                    return Response;
+                    return userCategory.Category;
                 }
                 catch(Exception e)
                 {
-                    Response.IsSuccess = false;
-                    Response.Message = e.Message;
-                    Response.Result = null;
-                    transaction.Rollback();
-                    return Response;
+                    throw e;
                 }
             }
         }
@@ -126,7 +93,7 @@ namespace Expenses.Data.DataAccess
         
 
 
-        public Response UpdateCategory(Category category, int idcategory)
+        public Category UpdateCategory(Category category, int idcategory)
         {
             try
             {
@@ -138,80 +105,60 @@ namespace Expenses.Data.DataAccess
                     categoryTarget.Status = category.Status;
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se actualizo la categoria";
-                    Response.Result = null;
+                    return categoryTarget;
                 }
                 else throw new Exception("No se encontraron datos disponibles");
             }
             catch (Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
 
-        public Response DeleteCategory(int idcategory)
+        public Category DeleteCategory(int idcategory)
         {
             try
             {
-                var categoryExpense = EntityContext.Expenses.Where(x => x.Category_Id == idcategory).Count();
-                if (categoryExpense > 0)
-                {
-                    Response.IsSuccess = true;
-                    Response.Message = "No se puede eliminar la categoria porque existe un gasto perteneciente a esta categoria";
-                    return Response;
-                }
-
                 var category = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
                 if (category != null)
                 {
                     EntityContext.Categories.Remove(category);
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se elimino la categoria";
-                    Response.Result = null;
+                    return category;
                 }
                 else throw new Exception("No se encontro el registro disponible");
             }
             catch(Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
 
-        public Response DeleteUserCategory(int idcategory, int iduser)
+        public Category DeleteUserCategory(int idcategory, int iduser)
         {
             try
             {
-                var userCategory = EntityContext.UserCategories.Include("Category").Where(x => x.Category_Id == idcategory && x.User_Id == iduser).SingleOrDefault();
+                var userCategory = EntityContext.UserCategories
+                    .Include("Category")
+                    .Where(x => x.Category_Id == idcategory && x.User_Id == iduser)
+                    .SingleOrDefault();
                 if (userCategory != null)
                 {
                     EntityContext.UserCategories.Remove(userCategory);
                     EntityContext.Categories.Remove(userCategory.Category);
                     EntityContext.SaveChanges();
 
-                    Response.IsSuccess = true;
-                    Response.Message = "Se ha eliminado el registro";
-                    return Response;
+                    return userCategory.Category;
                 }
                 else
                     throw new Exception("No se encontro disponible el registro");
             }
             catch(Exception e)
             {
-                Response.IsSuccess = false;
-                Response.Message = e.Message;
-                Response.Result = null;
+                throw e;
             }
-            return Response;
         }
     }
 }
