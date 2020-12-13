@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpensesApp.Core.Helpers
+namespace Expenses.Core.Helpers
 {
     public static class SecurityHelper
     {

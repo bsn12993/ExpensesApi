@@ -1,5 +1,9 @@
-﻿using Expenses.Data.EntityModel;
+﻿using Expenses.Core.Models;
+using Expenses.Core.Models.User;
+using Expenses.Data.Context;
+using Expenses.Data.EntityModel;
 using Expenses.Data.Services;
+using Expenses.Data.UnitOfWork;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -11,10 +15,14 @@ namespace Expenses.Api.Controllers
     {
         // GET: Users
         private UserService _userService { get; set; }
+        private UnitOfWorkContainer _uow { get; set; }
+        private EntityContext _context;
 
         public UsersController()
         {
-            _userService = new UserService();
+            _context = new EntityContext();
+            _uow = new UnitOfWorkContainer(_context);
+            _userService = new UserService(_uow);
         }
 
         [HttpGet]
@@ -53,9 +61,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostUser([FromBody] User user)
+        public HttpResponseMessage PostUser([FromBody] CreateUserModel createUser)
         {
-            var response = _userService.PostUser(user);
+            var response = _userService.PostUser(createUser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -65,58 +73,15 @@ namespace Expenses.Api.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public HttpResponseMessage PutUser([FromBody] User user, int id)
+        public HttpResponseMessage PutUser([FromBody] UpdateUserModel updateUser, int id)
         {
-            var response = _userService.PutUser(user, id);
+            var response = _userService.PutUser(updateUser, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
                 return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
         }
 
-        [HttpPut]
-        [Route("update/name/{id}")]
-        public HttpResponseMessage PutUserName([FromBody] User user, int id)
-        {
-            var response = _userService.PutUserName(user.Name, id);
-            if (response.IsSuccess)
-                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
-            else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
-        }
-
-        [HttpPut]
-        [Route("update/lastname/{id}")]
-        public HttpResponseMessage PutUserLastName([FromBody] User user, int id)
-        {
-            var response = _userService.PutUserLastName(user.LastName, id);
-            if (response.IsSuccess)
-                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
-            else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
-        }
-
-        [HttpPut]
-        [Route("update/email/{id}")]
-        public HttpResponseMessage PutUserEmail([FromBody] User user, int id)
-        {
-            var response = _userService.PutUserEmail(user.Email, id);
-            if (response.IsSuccess)
-                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
-            else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
-        }
-
-        [HttpPut]
-        [Route("update/password/{id}")]
-        public HttpResponseMessage PutUserPassword([FromBody] User user, int id)
-        {
-            var response = _userService.PutUserPassword(user.Password, id);
-            if (response.IsSuccess)
-                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
-            else
-                return Request.CreateResponse(HttpStatusCode.NotFound, response, "application/json");
-        }
 
         [HttpDelete]
         [Route("delete/{id}")]

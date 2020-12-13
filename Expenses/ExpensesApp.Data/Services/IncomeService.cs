@@ -1,34 +1,35 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.EntityModel;
-using Expenses.Data.Repositories;
 using System;
 using ExpensesApp.Data.Models;
 using System.Collections.Generic;
+using ExpensesApp.Data.Services;
+using Expenses.Data.UnitOfWork;
+using ExpensesApp.Core.Models.Income;
 
 namespace Expenses.Data.Services
 {
-    public class IncomeService
+    public class IncomeService : BaseService
     {
-        private IncomeRepository _incomeRepository { get; set; }
-        private Response _response;
 
-        public IncomeService()
+        public IncomeService(UnitOfWorkContainer uow)
         {
-            _incomeRepository = new IncomeRepository();
             _response = new Response();
+            _context = new Context.EntityContext();
+            _uow = uow;
         }
 
         public Response GetIncomes()
         {
             try
             {
-                var collection = _incomeRepository.GetIncomes();
+                var collection = _uow.Repository.IncomeRepository.FindAll();
                 var collection_aux = new List<IncomeModel>();
                 foreach(var item in collection)
                 {
                     var income = new IncomeModel
                     {
-                        Id = item.Income_Id,
+                        Id = item.Id,
                         Date = item.Date,
                         Amount = item.Amount
                     };
@@ -42,17 +43,17 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetIncomesByUser(int iduser)
+        public Response GetIncomesByUser(int userId)
         {
             try
             {
-                var collection = _incomeRepository.GetIncomesByUser(iduser);
+                var collection = _uow.Repository.IncomeRepository.FindAll(userId);
                 var collection_aux = new List<IncomeModel>();
                 foreach (var item in collection)
                 {
                     var income = new IncomeModel
                     {
-                        Id = item.Income_Id,
+                        Id = item.Id,
                         Date = item.Date,
                         Amount = item.Amount
                     };
@@ -66,11 +67,11 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetIncomeById(int idincome)
+        public Response GetIncomeById(int incomeId)
         {
             try
             {
-                var item = _incomeRepository.GetIncomeById(idincome);
+                var item = _uow.Repository.IncomeRepository.FindById(incomeId);
                 return _response.GetResponse(true, "ok", item);
             }
             catch(Exception e)
@@ -79,11 +80,11 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetIncomesTotal(int iduser)
+        public Response GetIncomesTotal(int userId)
         {
             try
             {
-                var total = _incomeRepository.GetIncomesTotal(iduser);
+                var total = _uow.Repository.IncomeRepository.FindTotal(userId);
                 return _response.GetResponse(true, "ok", total);
             }
             catch(Exception e)
@@ -92,42 +93,73 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response PostIncome(Income income)
+        public Response PostIncome(CreateIncomeModel createIncome)
         {
-            try
+            using(var transaction = _uow.BeginTransaction())
             {
-                var item = _incomeRepository.InsertIncome(income);
-                return _response.GetResponse(true, "ok", item);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+
+                try
+                {
+                    var income = new Income
+                    {
+                        Amount = createIncome.Amount,
+                        Date = createIncome.Date
+                    };
+                    var item = _uow.Repository.IncomeRepository.Create(income);
+                    transaction.Commit();
+
+                    return _response.GetResponse(true, "ok", item);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
 
-        public Response PutIncome(Income income, int idincome)
+        public Response PutIncome(UpdateIncomeModel updateIncome, int incomeId)
         {
-            try
+            using(var transaction = _uow.BeginTransaction())
             {
-                var item = _incomeRepository.UpdateIncome(income, idincome);
-                return _response.GetResponse(true, "ok", item);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+                try
+                {
+                    var findIncome = _uow.Repository.IncomeRepository.FindById(incomeId);
+                    if (findIncome == null) throw new Exception("No se encontro registro");
+
+                    findIncome.Amount = updateIncome.Amount;
+                    findIncome.Date = updateIncome.Date;
+
+                    var item = _uow.Repository.IncomeRepository.Update(findIncome);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", item);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
 
-        public Response DeleteIncome(int idincome)
+        public Response DeleteIncome(int incomeId)
         {
-            try
+            using(var transaction = _uow.BeginTransaction())
             {
-                var item = _incomeRepository.DeleteIncome(idincome);
-                return _response.GetResponse(true, "ok", item);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+                try
+                {
+                    var findIncome = _uow.Repository.IncomeRepository.FindById(incomeId);
+                    if (findIncome == null) throw new Exception("No se encontro registro");
+
+                    var item = _uow.Repository.IncomeRepository.Delete(findIncome);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", item);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
     }

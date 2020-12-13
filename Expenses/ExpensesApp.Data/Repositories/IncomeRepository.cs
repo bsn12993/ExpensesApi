@@ -1,27 +1,26 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.Context;
 using Expenses.Data.EntityModel;
+using ExpensesApp.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Expenses.Data.Repositories
 {
-    public class IncomeRepository
+    public class IncomeRepository : BaseRepository
     {
-        EntityContext EntityContext { get; set; }
-
-        public IncomeRepository()
+        public IncomeRepository(EntityContext context)
         {
-            EntityContext = new EntityContext();
+            _context = context;
         }
 
-        public List<Income> GetIncomes()
+        public List<Income> FindAll()
         {
             try
             {
-                var collection = EntityContext.Incomes.ToList();
-                return collection;
+                var findIncomes = _context.Incomes.ToList();
+                return findIncomes;
             }
             catch (Exception e)
             {
@@ -29,12 +28,15 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public List<Income> GetIncomesByUser(int iduser)
+        public List<Income> FindAll(int userId)
         {
             try
             {
-                var collection = EntityContext.Incomes.Where(x => x.User_Id == iduser).OrderByDescending(x => x.Date).ToList();
-                return collection;
+                var findIncomes = _context.Incomes
+                    .Where(x => x.UserId == userId)
+                    .OrderByDescending(x => x.Date)
+                    .ToList();
+                return findIncomes;
             }
             catch (Exception e)
             {
@@ -42,12 +44,14 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public Income GetIncomeById(int idincome)
+        public Income FindById(int incomeId)
         {
             try
             {
-                var item = EntityContext.Incomes.Where(x => x.Income_Id == idincome).SingleOrDefault();
-                return item;
+                var findIncome = _context.Incomes
+                    .Where(x => x.Id == incomeId)
+                    .SingleOrDefault();
+                return findIncome;
             }
             catch (Exception e)
             {
@@ -55,17 +59,17 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public decimal? GetIncomesTotal(int iduser)
+        public decimal? FindTotal(int iduser)
         {
             try
             {
-                var incomes = (EntityContext.Incomes
-                    .Where(x => x.User_Id == iduser)
-                    .Sum(x => x.Amount).HasValue) ? 
-                    EntityContext.Incomes
-                    .Where(x => x.User_Id == iduser)
+                var findTotalIncomes = (_context.Incomes
+                    .Where(x => x.UserId == iduser)
+                    .Sum(x => x.Amount).HasValue) ?
+                    _context.Incomes
+                    .Where(x => x.UserId == iduser)
                     .Sum(x => x.Amount) : 0M;
-                return incomes;
+                return findTotalIncomes;
             }
             catch (Exception e)
             {
@@ -74,13 +78,13 @@ namespace Expenses.Data.Repositories
         }
 
 
-        public Income InsertIncome(Income income)
+        public Income Create(Income income)
         {
             try
             {
-                EntityContext.Incomes.Add(income);
-                EntityContext.SaveChanges();
-
+                income.CreatedAt = DateTime.Now;
+                _context.Incomes.Add(income);
+                _context.SaveChanges();
                 return income;
             }
             catch (Exception e)
@@ -90,14 +94,13 @@ namespace Expenses.Data.Repositories
         }
 
 
-        public Income UpdateIncome(Income income, int idincome)
+        public Income Update(Income income)
         {
             try
             {
-                var incomeTarget = EntityContext.Incomes
-                    .Where(x => x.Income_Id == idincome)
-                    .SingleOrDefault();
-                return incomeTarget;
+                income.UpdatedAt = DateTime.Now;
+                _context.SaveChanges();
+                return income;
             }
             catch (Exception e)
             {
@@ -106,14 +109,13 @@ namespace Expenses.Data.Repositories
         }
 
 
-        public Income DeleteIncome(int idincome)
+        public Income Delete(Income income)
         {
             try
             {
-                var incomeTarget = EntityContext.Incomes
-                    .Where(x => x.Income_Id == idincome)
-                    .SingleOrDefault();
-                return incomeTarget;
+                income.DeletedAt = DateTime.Now;
+                _context.SaveChanges();
+                return income;
             }
             catch (Exception e)
             {

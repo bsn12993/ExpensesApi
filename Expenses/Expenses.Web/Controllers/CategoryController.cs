@@ -21,7 +21,7 @@ namespace Expenses.Web.Controllers
             {
                 CategoryVM categoryVM = new CategoryVM();
                 var response = await ApiServices.GetInstance()
-                    .GetList<Response>($"api/category/byuser/{SessionHelper.GetUser().User_Id}");
+                    .GetList<Response>($"api/category/byuser/{SessionHelper.GetUser().Id}");
                 if (response.IsSuccess)
                 {
                     return View((List<CategoryVM>)response.Result);

@@ -43,9 +43,21 @@
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />
+    <Compile Include="Models\Category\CreateCategoryModel.cs" />
+    <Compile Include="Models\Category\FindCategoryModel.cs" />
+    <Compile Include="Models\Category\UpdateCategoryModel.cs" />
     <Compile Include="Models\ExpenseCategory.cs" />
+    <Compile Include="Models\Expense\CreateExpenseModel.cs" />
+    <Compile Include="Models\Expense\FindExpenseModel.cs" />
+    <Compile Include="Models\Expense\UpdateExpenseModel.cs" />
+    <Compile Include="Models\Income\CreateIncomeModel.cs" />
+    <Compile Include="Models\Income\FindIncomeModel.cs" />
+    <Compile Include="Models\Income\UpdateIncomeModel.cs" />
     <Compile Include="Models\Response.cs" />
     <Compile Include="Models\Token.cs" />
+    <Compile Include="Models\User\CreateUserModel.cs" />
+    <Compile Include="Models\User\FindUserModel.cs" />
+    <Compile Include="Models\User\UpdateUserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

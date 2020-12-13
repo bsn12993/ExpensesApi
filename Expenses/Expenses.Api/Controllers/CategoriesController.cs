@@ -1,4 +1,7 @@
-﻿using Expenses.Data.Services;
+﻿using Expenses.Core.Models.Category;
+using Expenses.Data.Context;
+using Expenses.Data.Services;
+using Expenses.Data.UnitOfWork;
 using ExpensesApp.Data.Models;
 using System.Net;
 using System.Net.Http;
@@ -11,10 +14,14 @@ namespace Expenses.Api.Controllers
     {
         // GET: Categories
         private CategoryService _categoryService { get; set; }
+        private UnitOfWorkContainer _uow { get; set; }
+        private EntityContext _context;
 
         public CategoriesController()
         {
-            _categoryService = new CategoryService();
+            _context = new EntityContext();
+            _uow = new UnitOfWorkContainer(_context);
+            _categoryService = new CategoryService(_uow);
         }
 
         [HttpGet]
@@ -52,9 +59,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostCategory([FromBody] CategoryModel categoryModel)
+        public HttpResponseMessage PostCategory([FromBody] CreateCategoryModel createCategory)
         {
-            var response = _categoryService.PostCategory(categoryModel);
+            var response = _categoryService.PostCategory(createCategory);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -63,9 +70,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public HttpResponseMessage PutCategory([FromBody] CategoryModel categoryModel, int id)
+        public HttpResponseMessage PutCategory([FromBody] UpdateCategoryModel updateCategory, int id)
         {
-            var response = _categoryService.PutCategory(categoryModel, id);
+            var response = _categoryService.PutCategory(updateCategory, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -77,17 +84,6 @@ namespace Expenses.Api.Controllers
         public HttpResponseMessage DeleteCategory(int id)
         {
             var response = _categoryService.DeleteCategory(id);
-            if (response.IsSuccess)
-                return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
-            else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
-        }
-
-        [HttpDelete]
-        [Route("delete/{id}/{iduser}")]
-        public HttpResponseMessage DeleteUserCategory(int id, int iduser)
-        {
-            var response = _categoryService.DeleteUserCategory(id, iduser);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

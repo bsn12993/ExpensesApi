@@ -1,28 +1,29 @@
 ﻿using Expenses.Core.Models;
-using Expenses.Data.Repositories;
 using Expenses.Data.EntityModel;
-using ExpensesApp.Core.Helpers;
 using System;
+using ExpensesApp.Data.Services;
+using Expenses.Data.UnitOfWork;
+using Expenses.Core.Mappers;
+using Expenses.Core.Helpers;
+using Expenses.Core.Models.User;
 
 namespace Expenses.Data.Services
 {
-    public class UserService
+    public class UserService : BaseService
     {
-        private UserRepository _userRepository { get; set; }
-        private Response _response;
-
-        public UserService()
+        public UserService(UnitOfWorkContainer uow)
         {
-            _userRepository = new UserRepository();
             _response = new Response();
+            _context = new Context.EntityContext();
+            _uow = uow;
         }
 
         public Response GetUsers()
         {
             try
             {
-                var collection = _userRepository.GetUsers();
-                return _response.GetResponse(true, "ok", collection);
+                var collection = _uow.Repository.UserRepository.FindAll();
+                return _response.GetResponse(true, "ok", collection.GetListModel());
             }
             catch(Exception e)
             {
@@ -30,12 +31,13 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetUserById(int iduser)
+        public Response GetUserById(int userId)
         {
             try
             {
-                var user = _userRepository.GetUserById(iduser);
-                return _response.GetResponse(true, "ok", user);
+                var findUser = _uow.Repository.UserRepository.FindById(userId);
+                if (findUser == null) throw new Exception("No se encontro el registro");
+                return _response.GetResponse(true, "ok", findUser.GetUserModel());
             }
             catch(Exception e)
             {
@@ -48,8 +50,9 @@ namespace Expenses.Data.Services
             try
             {
                 password = password.Encrypt();
-                var user= _userRepository.GetUserByEmailAndPassword(email, password);
-                return _response.GetResponse(true, "ok", user);
+                var findUser = _uow.Repository.UserRepository.Find(email, password);
+                if (findUser == null) throw new Exception("No se encontro el registro");
+                return _response.GetResponse(true, "ok", findUser.GetUserModel());
             }
             catch(Exception e)
             {
@@ -57,96 +60,71 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response PostUser(User user)
+        public Response PostUser(CreateUserModel createUser)
         {
-            try
+            using (var transaction = _uow.BeginTransaction()) 
             {
-                var password_aux = user.Password;
-                user.Password = password_aux.Encrypt();
-                var userCreated = _userRepository.InsertUser(user);
-                return _response.GetResponse(true, "ok", userCreated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+                try
+                {
+                    var newUser = createUser.GetUserEntity();
+                    var userCreated = _uow.Repository.UserRepository.Create(newUser);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", userCreated.GetUserModel());
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
 
-        public Response PutUser(User user,int iduser)
+        public Response PutUser(UpdateUserModel updateUser,int userId)
         {
-            try
+            using(var transaction = _uow.BeginTransaction())
             {
-                var userUpdated = _userRepository.UpdateUser(user, iduser);
-                return _response.GetResponse(true, "ok", userUpdated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+
+                try
+                {
+                    var findUser = _uow.Repository.UserRepository.FindById(userId);
+                    if (findUser == null) throw new Exception("No se encontro el registro");
+
+                    findUser.Name = updateUser.Name;
+                    findUser.LastName = updateUser.LastName;
+                    findUser.Password = updateUser.Password.Encrypt();
+                    findUser.Email = updateUser.Email;
+
+                    var userUpdated = _uow.Repository.UserRepository.Update(findUser);
+                    transaction.Commit();
+
+                    return _response.GetResponse(true, "ok", userUpdated.GetUserModel());
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
 
-        public Response PutUserName(string name, int iduser)
+        public Response DeleteUser(int userId)
         {
-            try
+            using(var transaction = _uow.BeginTransaction())
             {
-                var userUpdated=_userRepository.UpdateUserName(name, iduser);
-                return _response.GetResponse(true, "ok", userUpdated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
-            }
-        }
+                try
+                {
+                    var findUser = _uow.Repository.UserRepository.FindById(userId);
+                    if (findUser == null) throw new Exception("No se encontro el registro");
 
-        public Response PutUserLastName(string lastName, int iduser)
-        {
-            try
-            {
-                var userUpdated = _userRepository.UpdateUserLastName(lastName, iduser);
-                return _response.GetResponse(true, "ok", userUpdated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
-            }
-        }
-
-        public Response PutUserEmail(string email, int iduser)
-        {
-            try
-            {
-                var userUpdated = _userRepository.UpdateUserEmail(email, iduser);
-                return _response.GetResponse(true, "ok", userUpdated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
-            }
-        }
-
-        public Response PutUserPassword(string password, int iduser)
-        {
-            try
-            {
-                var userUpdated= _userRepository.UpdateUserPassword(password, iduser);
-                return _response.GetResponse(true, "ok", userUpdated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
-            }
-        }
-
-        public Response DeleteUser(int iduser)
-        {
-            try
-            {
-                var userDeleted= _userRepository.DeleteUser(iduser);
-                return _response.GetResponse(true, "ok", userDeleted);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+                    var userDeleted = _uow.Repository.UserRepository.Delete(findUser);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", userDeleted);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
     }

@@ -1,35 +1,35 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.EntityModel;
-using Expenses.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using ExpensesApp.Data.Models;
+using ExpensesApp.Data.Services;
+using Expenses.Data.UnitOfWork;
+using ExpensesApp.Core.Models.Expense;
 
 namespace Expenses.Data.Services
 {
-    public class ExpenseService
+    public class ExpenseService : BaseService
     {
-        private ExpenseRepository _expenseRepository { get; set; }
-        private Response _response;
-
-        public ExpenseService()
+        public ExpenseService(UnitOfWorkContainer uow)
         {
-            _expenseRepository = new ExpenseRepository();
             _response = new Response();
+            _context = new Context.EntityContext();
+            _uow = uow;
         }
 
         public Response GetExpenses()
         {
             try
             {
-                var collection = _expenseRepository.GetExpences();
+                var collection = _uow.Repository.ExpenseRepository.FindAll();
                 var collection_aux = new List<ExpenseModel>();
                 foreach(var item in collection)
                 {
                     var expense = new ExpenseModel
                     {
-                        Id = item.Expense_Id,
-                        Date = item.Date,
+                        Id = item.Id,
+                        Date = item.ExpenseDate,
                         Amount = item.Amount,
                         Category = item.Category.Name,
                         Description = item.Category.Description
@@ -44,18 +44,18 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetExpencesHistory(int iduser)
+        public Response GetExpencesHistory(int userId)
         {
             try
             {
-                var collection = _expenseRepository.GetExpencesHistory(iduser);
+                var collection = _uow.Repository.ExpenseRepository.FindAll(userId);
                 var collection_aux = new List<ExpenseModel>();
                 foreach (var item in collection)
                 {
                     var expense = new ExpenseModel
                     {
-                        Id = item.Expense_Id,
-                        Date = item.Date,
+                        Id = item.Id,
+                        Date = item.ExpenseDate,
                         Amount = item.Amount,
                         Category = item.Category.Name,
                         Description = item.Category.Description
@@ -70,12 +70,13 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetExpensesById(int idexpense)
+        public Response GetExpensesById(int expenseId)
         {
             try
             {
-                var item = _expenseRepository.GetExpenceById(idexpense);
-                return _response.GetResponse(true, "ok", item);
+                var findExpense = _uow.Repository.ExpenseRepository.FindById(expenseId);
+                if (findExpense == null) throw new Exception("No se encontro el registro");
+                return _response.GetResponse(true, "ok", findExpense);
             }
             catch(Exception e)
             {
@@ -83,18 +84,18 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetExpenceByUser(int iduser)
+        public Response GetExpenceByUser(int userId)
         {
             try
             {
-                var collection = _expenseRepository.GetExpenceByUser(iduser);
+                var collection = _uow.Repository.ExpenseRepository.FindAll(userId);
                 var collection_aux = new List<ExpenseModel>();
                 foreach (var item in collection)
                 {
                     var expense = new ExpenseModel
                     {
-                        Id = item.Expense_Id,
-                        Date = item.Date,
+                        Id = item.Id,
+                        Date = item.ExpenseDate,
                         Amount = item.Amount,
                         Category = item.Category.Name,
                         Description = item.Category.Description
@@ -109,11 +110,11 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response GetTotalExpenceByCategoryAndUser(int iduser)
+        public Response GetTotalExpenceByCategoryAndUser(int userId)
         {
             try
             {
-                var collection = _expenseRepository.GetTotalExpenceByCategoryAndUser(iduser);
+                var collection = _uow.Repository.ExpenseRepository.FindTotalByCategoryAndUser(userId);
                 return _response.GetResponse(true, "ok", collection);
             }
             catch(Exception e)
@@ -122,42 +123,74 @@ namespace Expenses.Data.Services
             }
         }
 
-        public Response PostExpense(Expense expense)
+        public Response PostExpense(CreateExpenseModel createExpense)
         {
-            try
+           using(var transaction = _uow.BeginTransaction())
+           {
+                try
+                {
+                    var expense = new Expense
+                    {
+                        Amount = createExpense.Amount,
+                        CategoryId = createExpense.CategoryId,
+                        ExpenseDate = createExpense.ExpenseDate,
+                        UserId = createExpense.UserId
+                    };
+                    var expenseCreated = _uow.Repository.ExpenseRepository.Create(expense);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", expenseCreated);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
+           }
+        }
+
+        public Response PutExpense(UpdateExpenseModel updateExpense,int expenseId)
+        {
+            using(var transaction = _uow.BeginTransaction())
             {
-                var expenseCreated = _expenseRepository.InsertExpence(expense);
-                return _response.GetResponse(true, "ok", expenseCreated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+
+                try
+                {
+                    var findExpense = _uow.Repository.ExpenseRepository.FindById(expenseId);
+                    if (findExpense == null) throw new Exception("No se encontro el registro");
+
+                    findExpense.Amount = updateExpense.Amount;
+                    findExpense.ExpenseDate = updateExpense.ExpenseDate;
+
+                    var expenseUpdated = _uow.Repository.ExpenseRepository.Update(findExpense);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", expenseUpdated);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
 
-        public Response PutExpense(Expense expense,int idexpense)
+        public Response DeleteExpense(int expenseId)
         {
-            try
+            using(var transaction = _uow.BeginTransaction())
             {
-                var expenseUpdated = _expenseRepository.UpdateExpence(expense, idexpense);
-                return _response.GetResponse(true, "ok", expenseUpdated);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
-            }
-        }
+                try
+                {
+                    var findExpense = _uow.Repository.ExpenseRepository.FindById(expenseId);
+                    if (findExpense == null) throw new Exception("No se encontro el registro");
 
-        public Response DeleteExpense(int idexpense)
-        {
-            try
-            {
-                var expenseDeleted = _expenseRepository.DeleteExpence(idexpense);
-                return _response.GetResponse(true, "ok", expenseDeleted);
-            }
-            catch(Exception e)
-            {
-                return _response.GetResponse(false, e.Message);
+                    var expenseDeleted = _uow.Repository.ExpenseRepository.Delete(findExpense);
+                    transaction.Commit();
+                    return _response.GetResponse(true, "ok", expenseDeleted);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    return _response.GetResponse(false, e.Message);
+                }
             }
         }
     }

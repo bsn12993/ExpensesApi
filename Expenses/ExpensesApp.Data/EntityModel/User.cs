@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace Expenses.Data.EntityModel
 {
-    [Table("Users")]
-    public class User
+    [Table("users")]
+    public class User : Auditory
     {
-        [Column("iduser")]
+        [Column("id")]
         [Key]
-        public int User_Id { get; set; }
+        public int Id { get; set; }
         [Column("name")]
         public string Name { get; set; }
-        [Column("lastName")]
+        [Column("last_name")]
         public string LastName { get; set; }
         [Column("password")]
         public string Password { get; set; }

@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 
 namespace Expenses.Data.EntityModel
 {
-    [Table("Categories")]
-    public class Category
+    [Table("categories")]
+    public class Category : Auditory
     {
-        [Column("idcategory")]
+        [Column("id")]
         [Key]
-        public int Category_Id { get; set; }
+        public int Id { get; set; }
+
         [Column("name")]
         public string Name { get; set; }
+
         [Column("description")]
         public string Description { get; set; }
+
         [Column("status")]
         public int Status { get; set; }
     }

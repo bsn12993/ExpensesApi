@@ -1,28 +1,27 @@
-﻿using Expenses.Core.Models;
-using Expenses.Data.Context;
+﻿using Expenses.Data.Context;
 using Expenses.Data.EntityModel;
 using ExpensesApp.Data.EntityModel;
+using ExpensesApp.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Expenses.Data.Repositories
 {
-    public class CategoryRepository
+    public class CategoryRepository : BaseRepository
     {
-        EntityContext EntityContext { get; set; }
 
-        public CategoryRepository()
+        public CategoryRepository(EntityContext context)
         {
-            EntityContext = new EntityContext();
+            _context = context;
         }
 
-        public List<Category> GetCategories()
+        public List<Category> FindAll()
         {
             try
             {
-                var Categories = EntityContext.Categories.ToList();
-                return Categories;
+                var findCategories = _context.Categories.ToList();
+                return findCategories;
             }
             catch (Exception e)
             {
@@ -30,126 +29,73 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public Category GetCategoryById(int idcategory)
+        public Category FindById(int categoryId)
         {
             try
             {
-                var Category = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
-                if (Category != null)
-                {
-                    return Category;
-                }
-                else throw new Exception("No se recuperaron datos de categorías");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public List<UserCategory> GetCategoryByUser(int iduser)
-        {
-            try
-            {
-                var userCategories = EntityContext.UserCategories
-                    .Include("User").Include("Category").Where(x => x.User.User_Id == iduser).ToList();
-                //var Category = EntityContext.
-                //    Categories.Include("User").Where(x => x.User.User_Id == iduser).SingleOrDefault();
-                return userCategories;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public Category InsertCategory(UserCategory userCategory)
-        {          
-            using (var transaction = EntityContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    EntityContext.Categories.Add(userCategory.Category);
-                    EntityContext.SaveChanges();
-                    userCategory.Category_Id = userCategory.Category.Category_Id;
-
-                    EntityContext.UserCategories.Add(userCategory);
-                    EntityContext.SaveChanges();
-
-                    transaction.Commit();
-                    return userCategory.Category;
-                }
-                catch(Exception e)
-                {
-                    throw e;
-                }
-            }
-        }
-           
-        
-
-
-        public Category UpdateCategory(Category category, int idcategory)
-        {
-            try
-            {
-                var categoryTarget = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
-                if (categoryTarget != null)
-                {
-                    categoryTarget.Description = category.Description;
-                    categoryTarget.Name = category.Name;
-                    categoryTarget.Status = category.Status;
-                    EntityContext.SaveChanges();
-
-                    return categoryTarget;
-                }
-                else throw new Exception("No se encontraron datos disponibles");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-
-        public Category DeleteCategory(int idcategory)
-        {
-            try
-            {
-                var category = EntityContext.Categories.Where(x => x.Category_Id == idcategory).SingleOrDefault();
-                if (category != null)
-                {
-                    EntityContext.Categories.Remove(category);
-                    EntityContext.SaveChanges();
-
-                    return category;
-                }
-                else throw new Exception("No se encontro el registro disponible");
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public Category DeleteUserCategory(int idcategory, int iduser)
-        {
-            try
-            {
-                var userCategory = EntityContext.UserCategories
-                    .Include("Category")
-                    .Where(x => x.Category_Id == idcategory && x.User_Id == iduser)
+                var findCategory = _context.Categories
+                    .Where(x => x.Id == categoryId)
                     .SingleOrDefault();
-                if (userCategory != null)
-                {
-                    EntityContext.UserCategories.Remove(userCategory);
-                    EntityContext.Categories.Remove(userCategory.Category);
-                    EntityContext.SaveChanges();
+                return findCategory;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
-                    return userCategory.Category;
-                }
-                else
-                    throw new Exception("No se encontro disponible el registro");
+        public List<UserCategory> FindAll(int userId)
+        {
+            try
+            {
+                var findUserCategories = _context.UserCategories
+                    .Include("User")
+                    .Include("Category")
+                    .Where(x => x.User.Id == userId)
+                    .ToList();
+                return findUserCategories;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public Category Create(Category category)
+        {
+            try
+            {
+                _context.Categories.Add(category);
+                _context.SaveChanges();
+                return category;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public Category Update(Category category)
+        {
+            try
+            {
+                _context.SaveChanges();
+                return category;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        public Category Delete(Category category)
+        {
+            try
+            {
+                category.DeletedAt = DateTime.Now;
+                _context.SaveChanges();
+                return category;
             }
             catch(Exception e)
             {

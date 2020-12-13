@@ -11,7 +11,7 @@ namespace Expenses.Data.Context
 {
     public class EntityContext : DbContext
     {
-        public EntityContext():base("Data Source=LAPTOP-CFVKV8OI;Initial Catalog=Expenses_DEV;User ID=sa;Password=123;")
+        public EntityContext():base("Data Source=LAPTOP-CFVKV8OI;Initial Catalog=expenses;User ID=sa;Password=123;")
         {
 
         }

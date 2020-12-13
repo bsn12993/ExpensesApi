@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,6 +12,8 @@
     <AssemblyName>ExpensesApp.Data</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,10 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -48,28 +51,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context\EntityContext.cs" />
+    <Compile Include="EntityModel\Auditory.cs" />
+    <Compile Include="Mappers\UserMapper.cs" />
+    <Compile Include="Migrations\202012131901599_Reset.cs" />
+    <Compile Include="Migrations\202012131901599_Reset.designer.cs">
+      <DependentUpon>202012131901599_Reset.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012131907281_001.cs" />
+    <Compile Include="Migrations\202012131907281_001.designer.cs">
+      <DependentUpon>202012131907281_001.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\ExpenseRepository.cs" />
     <Compile Include="Repositories\IncomeRepository.cs" />
+    <Compile Include="Repositories\UserCategoryRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="EntityModel\Category.cs" />
     <Compile Include="EntityModel\Expense.cs" />
     <Compile Include="EntityModel\Income.cs" />
     <Compile Include="EntityModel\User.cs" />
     <Compile Include="EntityModel\UserCategory.cs" />
-    <Compile Include="Migrations\201907172121099_v2.cs" />
-    <Compile Include="Migrations\201907172121099_v2.Designer.cs">
-      <DependentUpon>201907172121099_v2.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\ExpenseModel.cs" />
     <Compile Include="Models\IncomeModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\CategoryService.cs" />
     <Compile Include="Services\ExpenseService.cs" />
     <Compile Include="Services\IncomeService.cs" />
     <Compile Include="Services\UserService.cs" />
+    <Compile Include="UnitOfWork\UnitOfWorkContainer.cs" />
+    <Compile Include="UnitOfWork\UnitOfWorkRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -82,9 +96,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201907172121099_v2.resx">
-      <DependentUpon>201907172121099_v2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012131901599_Reset.resx">
+      <DependentUpon>202012131901599_Reset.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012131907281_001.resx">
+      <DependentUpon>202012131907281_001.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
 </Project>

@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace Expenses.Data.EntityModel
 {
-    [Table("Expenses")]
-    public class Expense
+    [Table("expenses")]
+    public class Expense : Auditory
     {
-        [Column("idexpense")]
+        [Column("id")]
         [Key]
-        public int Expense_Id { get; set; }
-        [Column("date")]
-        public DateTime Date { get; set; }
+        public int Id { get; set; }
+        [Column("expense_date")]
+        public DateTime ExpenseDate { get; set; }
         [Column("amount")]
         public decimal Amount { get; set; }
         [ForeignKey("Category")]
-        public int Category_Id { get; set; }
+        public int CategoryId { get; set; }
         [ForeignKey("User")]
-        public int User_Id { get; set; }
+        public int UserId { get; set; }
 
-        [Column("idcategory")]
+        [Column("categoryId")]
         public Category Category { get; set; }
-        [Column("iduser")]
+        [Column("userId")]
         public User User { get; set; }
     }
 }

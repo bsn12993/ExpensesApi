@@ -1,5 +1,8 @@
-﻿using Expenses.Data.EntityModel;
+﻿using Expenses.Data.Context;
+using Expenses.Data.EntityModel;
 using Expenses.Data.Services;
+using Expenses.Data.UnitOfWork;
+using ExpensesApp.Core.Models.Income;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +18,14 @@ namespace Expenses.Api.Controllers
     {
         // GET: Incomes
         private IncomeService _incomeService { get; set; }
+        private UnitOfWorkContainer _uow { get; set; }
+        private EntityContext _context;
 
         public IncomesController()
         {
-            _incomeService = new IncomeService();
+            _context = new EntityContext();
+            _uow = new UnitOfWorkContainer(_context);
+            _incomeService = new IncomeService(_uow);
         }
 
         [HttpGet]
@@ -67,9 +74,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostIncome([FromBody] Income income)
+        public HttpResponseMessage PostIncome([FromBody] CreateIncomeModel createIncome)
         {
-            var response = _incomeService.PostIncome(income);
+            var response = _incomeService.PostIncome(createIncome);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -78,9 +85,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public HttpResponseMessage PutIncome([FromBody] Income income, int id)
+        public HttpResponseMessage PutIncome([FromBody] UpdateIncomeModel updateIncome, int id)
         {
-            var response = _incomeService.PutIncome(income, id);
+            var response = _incomeService.PutIncome(updateIncome, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpensesApp.Core.Helpers
+namespace Expenses.Core.Helpers
 {
     class EmailHelper
     {

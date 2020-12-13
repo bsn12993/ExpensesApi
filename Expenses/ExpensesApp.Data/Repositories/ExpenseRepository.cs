@@ -1,7 +1,7 @@
-﻿using Expenses.Core.Models;
-using Expenses.Data.Context;
+﻿using Expenses.Data.Context;
 using Expenses.Data.EntityModel;
 using ExpensesApp.Core.Models;
+using ExpensesApp.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,24 +9,22 @@ using System.Linq;
 
 namespace Expenses.Data.Repositories
 {
-    public class ExpenseRepository
+    public class ExpenseRepository : BaseRepository
     {
-        EntityContext EntityContext { get; set; }
-
-        public ExpenseRepository()
+        public ExpenseRepository(EntityContext context)
         {
-            EntityContext = new EntityContext();
+            _context = context;
         }
 
-        public List<Expense> GetExpences()
+        public List<Expense> FindAll()
         {
             try
             {
-                var expenses = EntityContext.Expenses
+                var findExpenses = _context.Expenses
                     .Include("Category")
-                    .OrderByDescending(x => x.Date)
+                    .OrderByDescending(x => x.ExpenseDate)
                     .ToList();
-                return expenses;
+                return findExpenses;
             }
             catch (Exception e)
             {
@@ -34,15 +32,15 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public List<Expense> GetExpencesHistory(int iduser)
+        public List<Expense> FindHistoryByUser(int userId)
         {
             try
             {
-                var expenses = EntityContext.Expenses
+                var findExpenses = _context.Expenses
                     .Include("Category")
-                    .Where(x => x.User_Id == iduser)
+                    .Where(x => x.UserId == userId)
                     .ToList();
-                return expenses;
+                return findExpenses;
             }
             catch (Exception e)
             {
@@ -50,13 +48,59 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public Expense GetExpenceById(int idexpense)
+        public Expense FindById(int expenseId)
         {
             try
             {
-                var expense = EntityContext.Expenses
-                    .Where(x => x.Expense_Id == idexpense)
+                var findExpense = _context.Expenses
+                    .Where(x => x.Id == expenseId)
                     .SingleOrDefault();
+                return findExpense;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public List<Expense> FindAll(int userId)
+        {
+            try
+            {
+                var findExpenses = _context.Expenses
+                    .Include("Category")
+                    .Where(x => x.UserId == userId)
+                    .ToList();
+                return findExpenses;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public List<ExpenseCategory> FindTotalByCategoryAndUser(int userId)
+        {
+            try
+            {
+                var findExpenses = _context.Database
+                    .SqlQuery<ExpenseCategory>(@"sp_GetCategoryExpensesTotal @iduser", new SqlParameter("@iduser", userId))
+                    .ToList();
+                return findExpenses;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public Expense Create(Expense expense)
+        {
+            try
+            {
+                expense.CreatedAt = DateTime.Now;
+                _context.Expenses.Add(expense);
+                _context.SaveChanges();
                 return expense;
             }
             catch (Exception e)
@@ -65,44 +109,12 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public List<Expense> GetExpenceByUser(int iduser)
+        public Expense Update(Expense expense)
         {
             try
             {
-                var expenses = EntityContext.Expenses
-                    .Include("Category")
-                    .Where(x => x.User_Id == iduser)
-                    .ToList();
-                return expenses;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public List<ExpenseCategory> GetTotalExpenceByCategoryAndUser(int iduser)
-        {
-            try
-            {
-                var expenses = EntityContext.Database
-                    .SqlQuery<ExpenseCategory>(@"sp_GetCategoryExpensesTotal @iduser", new SqlParameter("@iduser", iduser))
-                    .ToList();
-                return expenses;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public Expense InsertExpence(Expense expense)
-        {
-            try
-            {
-                EntityContext.Expenses.Add(expense);
-                EntityContext.SaveChanges();
-
+                expense.UpdatedAt = DateTime.Now;
+                _context.SaveChanges();
                 return expense;
             }
             catch (Exception e)
@@ -111,29 +123,12 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public Expense UpdateExpence(Expense expense,int idexpense)
+        public Expense Delete(Expense expense)
         {
             try
             {
-                var expenseTarget = EntityContext.Expenses
-                    .Where(x => x.Expense_Id == idexpense)
-                    .SingleOrDefault();
-                return expenseTarget;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public Expense DeleteExpence(int idexpense)
-        {
-            try
-            {
-                var expenseTarget = EntityContext.Expenses
-                    .Where(x => x.Expense_Id == idexpense)
-                    .SingleOrDefault();
-                return expenseTarget;
+                expense.DeletedAt = DateTime.Now;
+                return expense;
             }
             catch (Exception e)
             {

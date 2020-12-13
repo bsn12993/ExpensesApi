@@ -9,21 +9,21 @@ using System.Threading.Tasks;
 
 namespace ExpensesApp.Data.EntityModel
 {
-    [Table("UserCategory")]
-    public class UserCategory
+    [Table("user_has_category")]
+    public class UserCategory : Auditory
     {
         [Key]
-        [Column("idusercategory")]
-        public int UserCategory_Id { get; set; }
+        [Column("id")]
+        public int UserCategoryId { get; set; }
 
         [ForeignKey("User")]
-        public int User_Id { get; set; }
-        [Column("iduser")]
+        public int UserId { get; set; }
+        [Column("userId")]
         public User User { get; set; }
 
         [ForeignKey("Category")]
-        public int Category_Id { get; set; }
-        [Column("idcategory")]
+        public int CategoryId { get; set; }
+        [Column("categoryId")]
         public Category Category { get; set; }
     }
 }

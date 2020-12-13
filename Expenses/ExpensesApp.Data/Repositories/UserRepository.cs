@@ -1,27 +1,28 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Data.Context;
 using Expenses.Data.EntityModel;
+using ExpensesApp.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Expenses.Data.Repositories
 {
-    public class UserRepository
+    public class UserRepository : BaseRepository
     {
-        EntityContext EntityContext { get; set; }
-
-        public UserRepository()
+        public UserRepository(EntityContext context)
         {
-            EntityContext = new EntityContext();
+            _context = context;
         }
 
-        public List<User> GetUsers()
+        public List<User> FindAll()
         {
             try
             {
-                var users = EntityContext.Users.ToList();
-                return users;
+                var findUsers = _context.Users
+                    .Where(x => x.DeletedAt == null)
+                    .ToList();
+                return findUsers;
             }
             catch(Exception e)
             {
@@ -29,14 +30,14 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public User GetUserById(int iduser)
+        public User FindById(int userId)
         {
             try
             {
-                var user = EntityContext.Users
-                    .Where(x => x.User_Id == iduser)
+                var findUser = _context.Users
+                    .Where(x => x.Id == userId && x.DeletedAt == null)
                     .SingleOrDefault();
-                return user;
+                return findUser;
             }
             catch (Exception e)
             {
@@ -45,14 +46,17 @@ namespace Expenses.Data.Repositories
         }
 
 
-        public User GetUserByEmailAndPassword(string email, string password)
+        public User Find(string email, string password)
         {
             try
             {
-                var user = EntityContext.Users
-                    .Where(x => x.Email.Equals(email) && x.Password.Equals(password))
+                var findUser = _context.Users
+                    .Where(x => 
+                        x.Email.Equals(email) && 
+                        x.Password.Equals(password) &&
+                        x.DeletedAt == null)
                     .SingleOrDefault();
-                return user;
+                return findUser;
             }
             catch (Exception e)
             {
@@ -60,17 +64,17 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public User InsertUser(User user)
+        public User Create(User user)
         {
             try
             {
-                var validateUser = EntityContext.Users
+                var findUser = _context.Users
                     .Where(x => x.Email.Equals(user.Email) && x.Password.Equals(user.Password))
                     .LongCount();
-                if (validateUser == 0)
+                if (findUser == 0)
                 {
-                    EntityContext.Users.Add(user);
-                    EntityContext.SaveChanges();
+                    _context.Users.Add(user);
+                    _context.SaveChanges();
                     return user;
                 }
                 else
@@ -84,93 +88,33 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public User UpdateUser(User user, int iduser)
+        public User Update(User user)
         {
             try
             {
-                var userTarget = EntityContext.Users
-                    .Where(x => x.User_Id == iduser)
+                user.UpdatedAt = DateTime.Now;
+                _context.SaveChanges();
+                return user;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+ 
+  
+
+        public User Update(string password, int userId)
+        {
+            try
+            {
+                var userTarget = _context.Users
+                    .Where(x => x.Id == userId)
                     .SingleOrDefault();
                 if (userTarget != null)
                 {
-                    userTarget.Email = user.Email;
-                    userTarget.LastName = user.LastName;
-                    userTarget.Name = user.Name;
-                    userTarget.Password = user.Password;
-                    EntityContext.SaveChanges();
-
-                    return user;
-                }
-                else throw new Exception("No se encontro el registro disponible");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public User UpdateUserName(string name, int iduser)
-        {
-            try
-            {
-                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                return userTarget;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public User UpdateUserLastName(string lastName, int iduser)
-        {
-            try
-            {
-                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                if (userTarget != null)
-                {
-                    userTarget.LastName = lastName;
-                    EntityContext.SaveChanges();
-
-                    return userTarget;
-                }
-                else throw new Exception("No se encontro el registro disponible");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public User UpdateUserEmail(string email, int iduser)
-        {
-            try
-            {
-                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                if (userTarget != null)
-                {
-                    userTarget.Email = email;
-                    EntityContext.SaveChanges();
-
-                    return userTarget;
-                }
-                else throw new Exception("No se encontro el registro disponible");
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public User UpdateUserPassword(string password, int iduser)
-        {
-            try
-            {
-                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                if (userTarget != null)
-                {
                     userTarget.Password = password;
-                    EntityContext.SaveChanges();
+                    _context.SaveChanges();
 
                     return userTarget;
                 }
@@ -182,19 +126,13 @@ namespace Expenses.Data.Repositories
             }
         }
 
-        public User DeleteUser(int iduser)
+        public User Delete(User user)
         {
             try
             {
-                var userTarget = EntityContext.Users.Where(x => x.User_Id == iduser).SingleOrDefault();
-                if (userTarget != null)
-                {
-                    EntityContext.Users.Remove(userTarget);
-                    EntityContext.SaveChanges();
-
-                    return userTarget;
-                }
-                else throw new Exception("No se encontro el registro disponible");
+                user.DeletedAt = DateTime.Now;
+                _context.SaveChanges();
+                return user;
             }
             catch (Exception e)
             {

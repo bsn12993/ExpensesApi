@@ -1,5 +1,8 @@
-﻿using Expenses.Data.EntityModel;
+﻿using Expenses.Data.Context;
+using Expenses.Data.EntityModel;
 using Expenses.Data.Services;
+using Expenses.Data.UnitOfWork;
+using ExpensesApp.Core.Models.Expense;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +18,14 @@ namespace Expenses.Api.Controllers
     {
         // GET: Expenses
         private ExpenseService _expenseService { get; set; }
+        private UnitOfWorkContainer _uow { get; set; }
+        private EntityContext _context;
 
         public ExpensesController()
         {
-            _expenseService = new ExpenseService();
+            _context = new EntityContext();
+            _uow = new UnitOfWorkContainer(_context);
+            _expenseService = new ExpenseService(_uow);
         }
 
         [HttpGet]
@@ -78,9 +85,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public HttpResponseMessage PostExpense([FromBody] Expense expense)
+        public HttpResponseMessage PostExpense([FromBody] CreateExpenseModel createExpense)
         {
-            var response = _expenseService.PostExpense(expense);
+            var response = _expenseService.PostExpense(createExpense);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
@@ -90,9 +97,9 @@ namespace Expenses.Api.Controllers
 
         [HttpPut]
         [Route("update/{id}")]
-        public HttpResponseMessage PutExpense([FromBody] Expense expense,int id)
+        public HttpResponseMessage PutExpense([FromBody] UpdateExpenseModel updateExpense,int id)
         {
-            var response = _expenseService.PutExpense(expense, id);
+            var response = _expenseService.PutExpense(updateExpense, id);
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
