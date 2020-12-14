@@ -36,7 +36,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpGet]
@@ -47,7 +47,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpGet]
@@ -58,7 +58,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpGet]
@@ -69,7 +69,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpGet]
@@ -80,7 +80,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpPost]
@@ -91,7 +91,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
 
@@ -103,7 +103,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
 
         [HttpDelete]
@@ -114,7 +114,7 @@ namespace Expenses.Api.Controllers
             if (response.IsSuccess)
                 return Request.CreateResponse(HttpStatusCode.OK, response, "application/json");
             else
-                return Request.CreateResponse(HttpStatusCode.BadRequest, response, "application/json");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, response.Message, "application/json");
         }
     }
 }
