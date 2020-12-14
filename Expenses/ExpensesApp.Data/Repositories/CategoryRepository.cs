@@ -20,7 +20,9 @@ namespace Expenses.Data.Repositories
         {
             try
             {
-                var findCategories = _context.Categories.ToList();
+                var findCategories = _context.Categories
+                    .Where(x => x.DeletedAt == null)
+                    .ToList();
                 return findCategories;
             }
             catch (Exception e)
@@ -34,7 +36,7 @@ namespace Expenses.Data.Repositories
             try
             {
                 var findCategory = _context.Categories
-                    .Where(x => x.Id == categoryId)
+                    .Where(x => x.Id == categoryId && x.DeletedAt == null)
                     .SingleOrDefault();
                 return findCategory;
             }
@@ -51,8 +53,9 @@ namespace Expenses.Data.Repositories
                 var findUserCategories = _context.UserCategories
                     .Include("User")
                     .Include("Category")
-                    .Where(x => x.User.Id == userId)
+                    .Where(x => x.User.Id == userId && x.DeletedAt == null)
                     .ToList();
+
                 return findUserCategories;
             }
             catch (Exception e)
@@ -65,6 +68,7 @@ namespace Expenses.Data.Repositories
         {
             try
             {
+                category.CreatedAt = DateTime.Now;
                 _context.Categories.Add(category);
                 _context.SaveChanges();
                 return category;
@@ -79,6 +83,7 @@ namespace Expenses.Data.Repositories
         {
             try
             {
+                category.UpdatedAt = DateTime.Now;
                 _context.SaveChanges();
                 return category;
             }

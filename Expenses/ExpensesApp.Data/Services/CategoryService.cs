@@ -136,6 +136,13 @@ namespace Expenses.Data.Services
                     if (findCategory == null) throw new Exception("No encontro el registro");
 
                     var categoryDeleted = _uow.Repository.CategoryRepository.Delete(findCategory);
+                    if (categoryDeleted == null) throw new Exception("No encontro el registro");
+
+                    var findUserCategory = _uow.Repository.UserCategoryRepository.Find(categoryId);
+                    if (findUserCategory == null) throw new Exception("No encontro el registro");
+
+                    var findUserCategoryDeleted = _uow.Repository.UserCategoryRepository.Delete(findUserCategory);
+                    if (findUserCategoryDeleted == null) throw new Exception("No encontro el registro");
 
                     transaction.Commit();
                     return _response.GetResponse(true, "ok", categoryDeleted);

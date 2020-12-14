@@ -23,6 +23,7 @@ namespace Expenses.Data.Repositories
                 var findExpenses = _context.Expenses
                     .Include("Category")
                     .OrderByDescending(x => x.ExpenseDate)
+                    .Where(x => x.DeletedAt == null)
                     .ToList();
                 return findExpenses;
             }
@@ -38,7 +39,7 @@ namespace Expenses.Data.Repositories
             {
                 var findExpenses = _context.Expenses
                     .Include("Category")
-                    .Where(x => x.UserId == userId)
+                    .Where(x => x.UserId == userId && x.DeletedAt == null)
                     .ToList();
                 return findExpenses;
             }
@@ -53,7 +54,7 @@ namespace Expenses.Data.Repositories
             try
             {
                 var findExpense = _context.Expenses
-                    .Where(x => x.Id == expenseId)
+                    .Where(x => x.Id == expenseId && x.DeletedAt == null)
                     .SingleOrDefault();
                 return findExpense;
             }
@@ -69,7 +70,7 @@ namespace Expenses.Data.Repositories
             {
                 var findExpenses = _context.Expenses
                     .Include("Category")
-                    .Where(x => x.UserId == userId)
+                    .Where(x => x.UserId == userId && x.DeletedAt == null)
                     .ToList();
                 return findExpenses;
             }
@@ -128,6 +129,7 @@ namespace Expenses.Data.Repositories
             try
             {
                 expense.DeletedAt = DateTime.Now;
+                _context.SaveChanges();
                 return expense;
             }
             catch (Exception e)
