@@ -34,7 +34,7 @@ namespace Expenses.Data.Repositories
             {
                 var findIncomes = _context.Incomes
                     .Where(x => x.UserId == userId)
-                    .OrderByDescending(x => x.Date)
+                    .OrderByDescending(x => x.IncomeDate)
                     .ToList();
                 return findIncomes;
             }

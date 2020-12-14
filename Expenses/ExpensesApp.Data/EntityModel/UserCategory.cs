@@ -14,7 +14,7 @@ namespace ExpensesApp.Data.EntityModel
     {
         [Key]
         [Column("id")]
-        public int UserCategoryId { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("User")]
         public int UserId { get; set; }

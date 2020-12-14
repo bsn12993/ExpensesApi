@@ -30,7 +30,7 @@ namespace Expenses.Data.Services
                     var income = new IncomeModel
                     {
                         Id = item.Id,
-                        Date = item.Date,
+                        Date = item.IncomeDate,
                         Amount = item.Amount
                     };
                     collection_aux.Add(income);
@@ -54,7 +54,7 @@ namespace Expenses.Data.Services
                     var income = new IncomeModel
                     {
                         Id = item.Id,
-                        Date = item.Date,
+                        Date = item.IncomeDate,
                         Amount = item.Amount
                     };
                     collection_aux.Add(income);
@@ -103,7 +103,7 @@ namespace Expenses.Data.Services
                     var income = new Income
                     {
                         Amount = createIncome.Amount,
-                        Date = createIncome.Date
+                        IncomeDate = createIncome.Date
                     };
                     var item = _uow.Repository.IncomeRepository.Create(income);
                     transaction.Commit();
@@ -128,7 +128,7 @@ namespace Expenses.Data.Services
                     if (findIncome == null) throw new Exception("No se encontro registro");
 
                     findIncome.Amount = updateIncome.Amount;
-                    findIncome.Date = updateIncome.Date;
+                    findIncome.IncomeDate = updateIncome.Date;
 
                     var item = _uow.Repository.IncomeRepository.Update(findIncome);
                     transaction.Commit();

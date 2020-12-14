@@ -15,7 +15,7 @@ namespace Expenses.Data.EntityModel
         [Key]
         public int Id { get; set; }
         [Column("income_date")]
-        public DateTime Date { get; set; }
+        public DateTime IncomeDate { get; set; }
         [Column("amount")]
         public decimal? Amount { get; set; }
         [ForeignKey("User")]
