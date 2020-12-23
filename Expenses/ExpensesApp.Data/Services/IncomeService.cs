@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ExpensesApp.Data.Services;
 using Expenses.Data.UnitOfWork;
 using ExpensesApp.Core.Models.Income;
+using ExpensesApp.Core.Exceptions;
 
 namespace Expenses.Data.Services
 {
@@ -47,6 +48,8 @@ namespace Expenses.Data.Services
         {
             try
             {
+                if (userId == 0) throw new IdRequiredException("El id es requerido");
+
                 var collection = _uow.Repository.IncomeRepository.FindAll(userId);
                 var collection_aux = new List<IncomeModel>();
                 foreach (var item in collection)
@@ -61,6 +64,10 @@ namespace Expenses.Data.Services
                 }
                 return _response.GetResponse(true, "ok", collection_aux);
             }
+            catch(IdRequiredException e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
             catch(Exception e)
             {
                 return _response.GetResponse(false, e.Message);
@@ -71,10 +78,16 @@ namespace Expenses.Data.Services
         {
             try
             {
+                if (incomeId == 0) throw new IdRequiredException("El id es requerido");
+
                 var item = _uow.Repository.IncomeRepository.FindById(incomeId);
                 return _response.GetResponse(true, "ok", item);
             }
-            catch(Exception e)
+            catch (IdRequiredException e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
+            catch (Exception e)
             {
                 return _response.GetResponse(false, e.Message);
             }
@@ -84,10 +97,16 @@ namespace Expenses.Data.Services
         {
             try
             {
+                if (userId == 0) throw new IdRequiredException("El id del usuario es requerido");
+
                 var total = _uow.Repository.IncomeRepository.FindTotal(userId);
                 return _response.GetResponse(true, "ok", total);
             }
-            catch(Exception e)
+            catch (IdRequiredException e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
+            catch (Exception e)
             {
                 return _response.GetResponse(false, e.Message);
             }
@@ -100,6 +119,15 @@ namespace Expenses.Data.Services
 
                 try
                 {
+                    if (createIncome == null)
+                        throw new ModelIsNullException("No se recibierón datos");
+
+                    if (createIncome.Amount == 0) 
+                        throw new AmountIsRequiredException("El monto es requerido");
+
+                    if (createIncome.Date == null)
+                        throw new DateIsRequiredException("La fecha es requerida");
+                    
                     var income = new Income
                     {
                         Amount = createIncome.Amount,
@@ -109,6 +137,18 @@ namespace Expenses.Data.Services
                     transaction.Commit();
 
                     return _response.GetResponse(true, "ok", item);
+                }
+                catch(AmountIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(DateIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(ModelIsNullException e)
+                {
+                    return _response.GetResponse(false, e.Message);
                 }
                 catch (Exception e)
                 {
@@ -124,8 +164,20 @@ namespace Expenses.Data.Services
             {
                 try
                 {
+                    if (updateIncome == null)
+                        throw new ModelIsNullException("No se recibierón datos");
+
+                    if (incomeId == 0)
+                        throw new IdRequiredException("El id es requerido");
+
+                    if (updateIncome.Amount == 0)
+                        throw new AmountIsRequiredException("El monto es requerido");
+
+                    if (updateIncome.Date == null)
+                        throw new DateIsRequiredException("La fecha es requerida");
+
                     var findIncome = _uow.Repository.IncomeRepository.FindById(incomeId);
-                    if (findIncome == null) throw new Exception("No se encontro registro");
+                    if (findIncome == null) throw new RecordNotFoundException("No se encontro registro");
 
                     findIncome.Amount = updateIncome.Amount;
                     findIncome.IncomeDate = updateIncome.Date;
@@ -133,6 +185,26 @@ namespace Expenses.Data.Services
                     var item = _uow.Repository.IncomeRepository.Update(findIncome);
                     transaction.Commit();
                     return _response.GetResponse(true, "ok", item);
+                }
+                catch(IdRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(AmountIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(DateIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(RecordNotFoundException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(ModelIsNullException e)
+                {
+                    return _response.GetResponse(false, e.Message);
                 }
                 catch (Exception e)
                 {
@@ -148,12 +220,23 @@ namespace Expenses.Data.Services
             {
                 try
                 {
+                    if (incomeId == 0)
+                        throw new IdRequiredException("El id es requerido");
+
                     var findIncome = _uow.Repository.IncomeRepository.FindById(incomeId);
-                    if (findIncome == null) throw new Exception("No se encontro registro");
+                    if (findIncome == null) throw new RecordNotFoundException("No se encontro registro");
 
                     var item = _uow.Repository.IncomeRepository.Delete(findIncome);
                     transaction.Commit();
                     return _response.GetResponse(true, "ok", item);
+                }
+                catch(IdRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(RecordNotFoundException e)
+                {
+                    return _response.GetResponse(false, e.Message);
                 }
                 catch (Exception e)
                 {

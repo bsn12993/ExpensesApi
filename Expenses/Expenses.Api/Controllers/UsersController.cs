@@ -1,7 +1,6 @@
 ﻿using Expenses.Core.Models;
 using Expenses.Core.Models.User;
 using Expenses.Data.Context;
-using Expenses.Data.EntityModel;
 using Expenses.Data.Services;
 using Expenses.Data.UnitOfWork;
 using System.Net;

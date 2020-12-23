@@ -7,6 +7,7 @@ using ExpensesApp.Data.Models;
 using ExpensesApp.Data.Services;
 using Expenses.Data.UnitOfWork;
 using Expenses.Core.Models.Category;
+using ExpensesApp.Core.Exceptions;
 
 namespace Expenses.Data.Services
 {
@@ -36,9 +37,18 @@ namespace Expenses.Data.Services
         {
             try
             {
+                if (categoryId == 0) throw new IdRequiredException($"El id de la categoría es requerido");
                 var findCategory = _uow.Repository.CategoryRepository.FindById(categoryId);
-                if (findCategory == null) throw new Exception("No se encontro el registro");
+                if (findCategory == null) throw new RecordNotFoundException($"No se encontro el registro");
                 return _response.GetResponse(true, "ok", findCategory);
+            }
+            catch(IdRequiredException e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
+            catch(RecordNotFoundException e)
+            {
+                return _response.GetResponse(false, e.Message);
             }
             catch(Exception e)
             {
@@ -50,6 +60,7 @@ namespace Expenses.Data.Services
         {
             try
             {
+                if (userId == 0) throw new IdRequiredException($"El id de la categoría es requerido");
                 var userCategories = _uow.Repository.CategoryRepository.FindAll(userId);
                 var collection = new List<CategoryModel>();
                 foreach (var item in userCategories)
@@ -65,6 +76,10 @@ namespace Expenses.Data.Services
                 }
                 return _response.GetResponse(true, "ok", collection);
             }
+            catch(IdRequiredException e)
+            {
+                return _response.GetResponse(false, e.Message);
+            }
             catch(Exception e)
             {
                 return _response.GetResponse(false, e.Message);
@@ -77,6 +92,18 @@ namespace Expenses.Data.Services
             {
                 try
                 {
+                    if (createCategory == null)
+                        throw new ModelIsNullException("No se recibierón datos");
+
+                    if (string.IsNullOrEmpty(createCategory.Name))
+                        throw new NameIsRequiredException($"El nombre es requerido");
+
+                    if (string.IsNullOrEmpty(createCategory.Description))
+                        throw new DescriptionIsRequiredException($"La descripción es requerido");
+
+                    if (createCategory.UserId == 0)
+                        throw new IdRequiredException($"El id del usuario es requerido");
+
                     var category = new Category
                     {
                         Name = createCategory.Name
@@ -93,6 +120,22 @@ namespace Expenses.Data.Services
                     transaction.Commit();
                     return _response.GetResponse(true, "ok", newCategory);
                 }
+                catch(NameIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(DescriptionIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(IdRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(ModelIsNullException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
                 catch (Exception e)
                 {
                     transaction.Rollback();
@@ -107,8 +150,20 @@ namespace Expenses.Data.Services
             {
                 try
                 {
+                    if (updateCategory == null)
+                        throw new ModelIsNullException("No se recibierón datos");
+
+                    if (categoryId == 0)
+                        throw new IdRequiredException($"El id de la categoría es requerido");
+
+                    if (string.IsNullOrEmpty(updateCategory.Name))
+                        throw new NameIsRequiredException($"El nombre es requerido");
+
+                    if (string.IsNullOrEmpty(updateCategory.Description))
+                        throw new DescriptionIsRequiredException($"La descripción es requerido");
+
                     var findCategory = _uow.Repository.CategoryRepository.FindById(categoryId);
-                    if (findCategory == null) throw new Exception("No encontro el registro");
+                    if (findCategory == null) throw new RecordNotFoundException($"No se encontro el registro");
 
                     findCategory.Name = updateCategory.Name;
                     findCategory.Description = updateCategory.Description;
@@ -117,6 +172,26 @@ namespace Expenses.Data.Services
                     transaction.Commit();
 
                     return _response.GetResponse(true, "ok", updateItem);
+                }
+                catch (NameIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch (DescriptionIsRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch (IdRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(RecordNotFoundException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch(ModelIsNullException e)
+                {
+                    return _response.GetResponse(false, e.Message);
                 }
                 catch (Exception e)
                 {
@@ -132,20 +207,31 @@ namespace Expenses.Data.Services
             {
                 try
                 {
+                    if (categoryId == 0)
+                        throw new IdRequiredException($"El id de la categoría es requerido");
+
                     var findCategory = _uow.Repository.CategoryRepository.FindById(categoryId);
-                    if (findCategory == null) throw new Exception("No encontro el registro");
+                    if (findCategory == null) throw new RecordNotFoundException("No encontro el registro");
 
                     var categoryDeleted = _uow.Repository.CategoryRepository.Delete(findCategory);
-                    if (categoryDeleted == null) throw new Exception("No encontro el registro");
+                    if (categoryDeleted == null) throw new RecordNotFoundException("No encontro el registro");
 
                     var findUserCategory = _uow.Repository.UserCategoryRepository.Find(categoryId);
-                    if (findUserCategory == null) throw new Exception("No encontro el registro");
+                    if (findUserCategory == null) throw new RecordNotFoundException("No encontro el registro");
 
                     var findUserCategoryDeleted = _uow.Repository.UserCategoryRepository.Delete(findUserCategory);
                     if (findUserCategoryDeleted == null) throw new Exception("No encontro el registro");
 
                     transaction.Commit();
                     return _response.GetResponse(true, "ok", categoryDeleted);
+                }
+                catch (IdRequiredException e)
+                {
+                    return _response.GetResponse(false, e.Message);
+                }
+                catch (RecordNotFoundException e)
+                {
+                    return _response.GetResponse(false, e.Message);
                 }
                 catch (Exception e)
                 {

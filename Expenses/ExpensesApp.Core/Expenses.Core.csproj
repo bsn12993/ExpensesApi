@@ -40,6 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\AmountIsRequiredException.cs" />
+    <Compile Include="Exceptions\DateIsRequiredException.cs" />
+    <Compile Include="Exceptions\DescriptionIsRequiredException.cs" />
+    <Compile Include="Exceptions\EmailRequiredException.cs" />
+    <Compile Include="Exceptions\IdRequiredException.cs" />
+    <Compile Include="Exceptions\ModelIsNullException.cs" />
+    <Compile Include="Exceptions\NameIsRequiredException.cs" />
+    <Compile Include="Exceptions\PasswordRequiredException.cs" />
+    <Compile Include="Exceptions\RecordNotFoundException.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />
@@ -60,8 +69,6 @@
     <Compile Include="Models\User\UpdateUserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
