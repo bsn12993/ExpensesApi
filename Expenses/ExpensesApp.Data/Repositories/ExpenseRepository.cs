@@ -79,7 +79,7 @@ namespace Expenses.Data.Repositories
                 throw e;
             }
         }
-
+        /**
         public List<ExpenseCategory> FindTotalByCategoryAndUser(int userId)
         {
             try
@@ -94,6 +94,7 @@ namespace Expenses.Data.Repositories
                 throw e;
             }
         }
+        **/
 
         public Expense Create(Expense expense)
         {

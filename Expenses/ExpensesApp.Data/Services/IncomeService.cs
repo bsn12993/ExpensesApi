@@ -7,6 +7,7 @@ using ExpensesApp.Data.Services;
 using Expenses.Data.UnitOfWork;
 using ExpensesApp.Core.Models.Income;
 using ExpensesApp.Core.Exceptions;
+using ExpensesApp.Core.Enums;
 
 namespace Expenses.Data.Services
 {
@@ -36,11 +37,11 @@ namespace Expenses.Data.Services
                     };
                     collection_aux.Add(income);
                 }
-                return _response.GetResponse(true, "ok", collection_aux);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", collection_aux);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -48,7 +49,8 @@ namespace Expenses.Data.Services
         {
             try
             {
-                if (userId == 0) throw new IdRequiredException("El id es requerido");
+                if (userId == 0) 
+                    throw new IdRequiredException("El id del usuario es requerido");
 
                 var collection = _uow.Repository.IncomeRepository.FindAll(userId);
                 var collection_aux = new List<IncomeModel>();
@@ -62,15 +64,15 @@ namespace Expenses.Data.Services
                     };
                     collection_aux.Add(income);
                 }
-                return _response.GetResponse(true, "ok", collection_aux);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", collection_aux);
             }
             catch(IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -78,18 +80,19 @@ namespace Expenses.Data.Services
         {
             try
             {
-                if (incomeId == 0) throw new IdRequiredException("El id es requerido");
+                if (incomeId == 0) 
+                    throw new IdRequiredException("El id del usuario es requerido");
 
                 var item = _uow.Repository.IncomeRepository.FindById(incomeId);
-                return _response.GetResponse(true, "ok", item);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", item);
             }
             catch (IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch (Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -97,18 +100,19 @@ namespace Expenses.Data.Services
         {
             try
             {
-                if (userId == 0) throw new IdRequiredException("El id del usuario es requerido");
+                if (userId == 0) 
+                    throw new IdRequiredException("El id del usuario es requerido");
 
                 var total = _uow.Repository.IncomeRepository.FindTotal(userId);
-                return _response.GetResponse(true, "ok", total);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", total);
             }
             catch (IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch (Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -120,7 +124,7 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (createIncome == null)
-                        throw new ModelIsNullException("No se recibierón datos");
+                        throw new ModelIsNullException("No se recibierón datos para crear el ingreso");
 
                     if (createIncome.Amount == 0) 
                         throw new AmountIsRequiredException("El monto es requerido");
@@ -136,24 +140,24 @@ namespace Expenses.Data.Services
                     var item = _uow.Repository.IncomeRepository.Create(income);
                     transaction.Commit();
 
-                    return _response.GetResponse(true, "ok", item);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", item);
                 }
                 catch(AmountIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(DateIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(ModelIsNullException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }
@@ -165,7 +169,7 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (updateIncome == null)
-                        throw new ModelIsNullException("No se recibierón datos");
+                        throw new ModelIsNullException("No se recibierón datos para actualizar el ingreso");
 
                     if (incomeId == 0)
                         throw new IdRequiredException("El id es requerido");
@@ -177,39 +181,40 @@ namespace Expenses.Data.Services
                         throw new DateIsRequiredException("La fecha es requerida");
 
                     var findIncome = _uow.Repository.IncomeRepository.FindById(incomeId);
-                    if (findIncome == null) throw new RecordNotFoundException("No se encontro registro");
+                    if (findIncome == null) 
+                        throw new RecordNotFoundException($"No se encontro el ingreso con el id {incomeId} para actualizar");
 
                     findIncome.Amount = updateIncome.Amount;
                     findIncome.IncomeDate = updateIncome.Date;
 
                     var item = _uow.Repository.IncomeRepository.Update(findIncome);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", item);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", item);
                 }
                 catch(IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(AmountIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(DateIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(RecordNotFoundException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(ModelIsNullException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }
@@ -224,24 +229,25 @@ namespace Expenses.Data.Services
                         throw new IdRequiredException("El id es requerido");
 
                     var findIncome = _uow.Repository.IncomeRepository.FindById(incomeId);
-                    if (findIncome == null) throw new RecordNotFoundException("No se encontro registro");
+                    if (findIncome == null) 
+                        throw new RecordNotFoundException($"No se encontro el ingreso con el id {incomeId} para eliminar");
 
                     var item = _uow.Repository.IncomeRepository.Delete(findIncome);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", item);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", item);
                 }
                 catch(IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(RecordNotFoundException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }

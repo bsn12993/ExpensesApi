@@ -6,6 +6,7 @@ using Expenses.Core.Mappers;
 using Expenses.Core.Helpers;
 using Expenses.Core.Models.User;
 using ExpensesApp.Core.Exceptions;
+using ExpensesApp.Core.Enums;
 
 namespace Expenses.Data.Services
 {
@@ -23,11 +24,11 @@ namespace Expenses.Data.Services
             try
             {
                 var collection = _uow.Repository.UserRepository.FindAll();
-                return _response.GetResponse(true, "ok", collection.GetListModel());
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", collection.GetListModel());
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -39,20 +40,22 @@ namespace Expenses.Data.Services
                     throw new IdRequiredException("El id es requerido");
 
                 var findUser = _uow.Repository.UserRepository.FindById(userId);
-                if (findUser == null) throw new RecordNotFoundException("No se encontro el registro");
-                return _response.GetResponse(true, "ok", findUser.GetUserModel());
+                if (findUser == null) 
+                    throw new RecordNotFoundException($"No se encontro el usuario con el id {userId}");
+
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", findUser.GetUserModel());
             }
             catch(IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(RecordNotFoundException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -64,28 +67,30 @@ namespace Expenses.Data.Services
                     throw new EmailRequiredException("El correo es requerido o no es valido");
 
                 if (string.IsNullOrEmpty(password))
-                    throw new PasswordRequiredException("El correo es requerido");
+                    throw new PasswordRequiredException("La contraseña es requerida");
 
                 password = password.Encrypt();
                 var findUser = _uow.Repository.UserRepository.Find(email, password);
-                if (findUser == null) throw new RecordNotFoundException("No se encontro el registro");
-                return _response.GetResponse(true, "ok", findUser.GetUserModel());
+                if (findUser == null) 
+                    throw new RecordNotFoundException($"No se encontro el usuario con el correo {email}");
+
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", findUser.GetUserModel());
             }
             catch(EmailRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(PasswordRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(RecordNotFoundException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -96,13 +101,13 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (createUser == null)
-                        throw new ModelIsNullException("No se recibierón datos");
+                        throw new ModelIsNullException("No se recibierón datos para crear un usuario");
 
                     if (string.IsNullOrEmpty(createUser.Email))
                         throw new EmailRequiredException("El correo es requerido o no es valido");
 
                     if (string.IsNullOrEmpty(createUser.Password))
-                        throw new PasswordRequiredException("La contraseña es requerida o no es valido");
+                        throw new PasswordRequiredException("El contraseña es requerida");
 
                     if (string.IsNullOrEmpty(createUser.Name))
                         throw new NameIsRequiredException("El nombre es requerido");
@@ -113,28 +118,28 @@ namespace Expenses.Data.Services
                     var newUser = createUser.GetUserEntity();
                     var userCreated = _uow.Repository.UserRepository.Create(newUser);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", userCreated.GetUserModel());
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", userCreated.GetUserModel());
                 }
                 catch(EmailRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(PasswordRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(NameIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(ModelIsNullException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }
@@ -147,7 +152,7 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (updateUser == null)
-                        throw new ModelIsNullException("No se recibierón datos");
+                        throw new ModelIsNullException("No se recibierón datos para crear un usuario");
 
                     if (userId == 0)
                         throw new IdRequiredException("El id es requerido");
@@ -156,7 +161,7 @@ namespace Expenses.Data.Services
                         throw new EmailRequiredException("El correo es requerido o no es valido");
 
                     if (string.IsNullOrEmpty(updateUser.Password))
-                        throw new PasswordRequiredException("La contraseña es requerida o no es valido");
+                        throw new PasswordRequiredException("La contraseña es requerida");
 
                     if (string.IsNullOrEmpty(updateUser.Name))
                         throw new NameIsRequiredException("El nombre es requerido");
@@ -165,7 +170,8 @@ namespace Expenses.Data.Services
                         throw new NameIsRequiredException("El apellido es requerido");
 
                     var findUser = _uow.Repository.UserRepository.FindById(userId);
-                    if (findUser == null) throw new RecordNotFoundException("No se encontro el registro");
+                    if (findUser == null) 
+                        throw new RecordNotFoundException($"No se encontro el usuario con id {userId} para actualizar");
 
                     findUser.Name = updateUser.Name;
                     findUser.LastName = updateUser.LastName;
@@ -175,36 +181,36 @@ namespace Expenses.Data.Services
                     var userUpdated = _uow.Repository.UserRepository.Update(findUser);
                     transaction.Commit();
 
-                    return _response.GetResponse(true, "ok", userUpdated.GetUserModel());
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", userUpdated.GetUserModel());
                 }
                 catch(IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (EmailRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (PasswordRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (NameIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(RecordNotFoundException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(ModelIsNullException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }
@@ -219,24 +225,25 @@ namespace Expenses.Data.Services
                         throw new IdRequiredException("El id es requerido");
 
                     var findUser = _uow.Repository.UserRepository.FindById(userId);
-                    if (findUser == null) throw new RecordNotFoundException("No se encontro el registro");
+                    if (findUser == null) 
+                        throw new RecordNotFoundException($"No se encontro el usuario con el id {userId} para eliminar");
 
                     var userDeleted = _uow.Repository.UserRepository.Delete(findUser);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", userDeleted);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", userDeleted);
                 }
                 catch(IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(RecordNotFoundException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }

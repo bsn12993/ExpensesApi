@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Expenses.Core.Models
+﻿namespace Expenses.Core.Models
 {
     public class Response
     {
-        public bool IsSuccess { get; set; }
+        public int Code { get; set; }
         public string Message { get; set; }
         public object Result { get; set; }
 
-        public Response GetResponse(bool isSuccess = false, string message = "", object result = null)
+        public Response GetResponse(int code, string message = "", object result = null)
         {
             return new Response
             {
-                IsSuccess = isSuccess,
+                Code = code,
                 Message = message,
                 Result = result
             };

@@ -7,6 +7,7 @@ using ExpensesApp.Data.Services;
 using Expenses.Data.UnitOfWork;
 using ExpensesApp.Core.Models.Expense;
 using ExpensesApp.Core.Exceptions;
+using ExpensesApp.Core.Enums;
 
 namespace Expenses.Data.Services
 {
@@ -37,11 +38,11 @@ namespace Expenses.Data.Services
                     };
                     collection_aux.Add(expense);
                 }
-                return _response.GetResponse(true, "ok", collection_aux);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", collection_aux);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -49,7 +50,8 @@ namespace Expenses.Data.Services
         {
             try
             {
-                if (userId == 0) throw new IdRequiredException($"El id del usuario es requerido");
+                if (userId == 0) 
+                    throw new IdRequiredException("El id del usuario es requerido");
 
                 var collection = _uow.Repository.ExpenseRepository.FindAll(userId);
                 var collection_aux = new List<ExpenseModel>();
@@ -65,15 +67,15 @@ namespace Expenses.Data.Services
                     };
                     collection_aux.Add(expense);
                 }
-                return _response.GetResponse(true, "ok", collection_aux);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", collection_aux);
             }
             catch(IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -81,23 +83,26 @@ namespace Expenses.Data.Services
         {
             try
             {
-                if (expenseId == 0) throw new IdRequiredException($"El id es requerido");
+                if (expenseId == 0) 
+                    throw new IdRequiredException("El id es requerido");
 
                 var findExpense = _uow.Repository.ExpenseRepository.FindById(expenseId);
-                if (findExpense == null) throw new RecordNotFoundException("No se encontro el registro");
-                return _response.GetResponse(true, "ok", findExpense);
+                if (findExpense == null) 
+                    throw new RecordNotFoundException($"No se encontro el gasto con el id {expenseId}");
+
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", findExpense);
             }
             catch(IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(RecordNotFoundException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
@@ -105,7 +110,8 @@ namespace Expenses.Data.Services
         {
             try
             {
-                if (userId == 0) throw new IdRequiredException($"El id del usuario es requerido");
+                if (userId == 0) 
+                    throw new IdRequiredException("El id del usuario es requerido");
 
                 var collection = _uow.Repository.ExpenseRepository.FindAll(userId);
                 var collection_aux = new List<ExpenseModel>();
@@ -121,23 +127,25 @@ namespace Expenses.Data.Services
                     };
                     collection_aux.Add(expense);
                 }
-                return _response.GetResponse(true, "ok", collection_aux);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", collection_aux);
             }
             catch(IdRequiredException e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
             }
             catch(Exception e)
             {
-                return _response.GetResponse(false, e.Message);
+                return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
             }
         }
 
+        /*
         public Response GetTotalExpenceByCategoryAndUser(int userId)
         {
             try
             {
-                if (userId == 0) throw new IdRequiredException($"El id del usuario es requerido");
+                if (userId == 0) 
+                    throw new IdRequiredException("El id del usuario es requerido");
 
                 var collection = _uow.Repository.ExpenseRepository.FindTotalByCategoryAndUser(userId);
                 return _response.GetResponse(true, "ok", collection);
@@ -151,6 +159,7 @@ namespace Expenses.Data.Services
                 return _response.GetResponse(false, e.Message);
             }
         }
+        */
 
         public Response PostExpense(CreateExpenseModel createExpense)
         {
@@ -159,19 +168,19 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (createExpense == null)
-                        throw new ModelIsNullException("No se recibierón datos");
+                        throw new ModelIsNullException("No se recibierón datos para crear el gasto");
 
                     if (createExpense.UserId == 0) 
-                        throw new IdRequiredException($"El id del usuario es requerido");
+                        throw new IdRequiredException("El id del usuario es requerido");
 
                     if (createExpense.CategoryId == 0)
-                        throw new IdRequiredException($"El id de la categoría es requerido");
+                        throw new IdRequiredException("El id de la categoría es requerido");
 
                     if (createExpense.ExpenseDate == null)
-                        throw new DateIsRequiredException($"El id de la categoría es requerido");
+                        throw new DateIsRequiredException("La fecha del gasto es requerido");
 
                     if (createExpense.Amount == 0)
-                        throw new AmountIsRequiredException($"El monto es requerido");
+                        throw new AmountIsRequiredException("El monto es requerido");
 
                     var expense = new Expense
                     {
@@ -182,28 +191,28 @@ namespace Expenses.Data.Services
                     };
                     var expenseCreated = _uow.Repository.ExpenseRepository.Create(expense);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", expenseCreated);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", expenseCreated);
                 }
                 catch(IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (DateIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (AmountIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(ModelIsNullException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
            }
         }
@@ -216,54 +225,55 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (updateExpense == null)
-                        throw new ModelIsNullException("No se recibierón datos");
+                        throw new ModelIsNullException("No se recibierón datos para actualizar gasto");
 
                     if (expenseId == 0)
-                        throw new IdRequiredException($"El id es requerido");
+                        throw new IdRequiredException($"El id del usuario es requerido");
 
                     if (updateExpense.CategoryId == 0)
-                        throw new IdRequiredException($"El id de la categoría es requerido");
+                        throw new IdRequiredException("El id de la categoría es requerido");
 
                     if (updateExpense.ExpenseDate == null)
-                        throw new DateIsRequiredException($"El id de la categoría es requerido");
+                        throw new DateIsRequiredException("La fehca del gasto es requerido");
 
                     if (updateExpense.Amount == 0)
-                        throw new AmountIsRequiredException($"El monto es requerido");
+                        throw new AmountIsRequiredException("El monto es requerido");
 
                     var findExpense = _uow.Repository.ExpenseRepository.FindById(expenseId);
-                    if (findExpense == null) throw new RecordNotFoundException("No se encontro el registro");
+                    if (findExpense == null) 
+                        throw new RecordNotFoundException($"No se encontro el gasto con el id {expenseId} para actualizar");
 
                     findExpense.Amount = updateExpense.Amount;
                     findExpense.ExpenseDate = updateExpense.ExpenseDate;
 
                     var expenseUpdated = _uow.Repository.ExpenseRepository.Update(findExpense);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", expenseUpdated);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", expenseUpdated);
                 }
                 catch (IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (DateIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (AmountIsRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(RecordNotFoundException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(ModelIsNullException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }
@@ -275,27 +285,28 @@ namespace Expenses.Data.Services
                 try
                 {
                     if (expenseId == 0)
-                        throw new IdRequiredException($"El id es requerido");
+                        throw new IdRequiredException("El id del gasto es requerido");
 
                     var findExpense = _uow.Repository.ExpenseRepository.FindById(expenseId);
-                    if (findExpense == null) throw new RecordNotFoundException("No se encontro el registro");
+                    if (findExpense == null) 
+                        throw new RecordNotFoundException($"No se encontro el gasto con el id {expenseId} para eliminar");
 
                     var expenseDeleted = _uow.Repository.ExpenseRepository.Delete(findExpense);
                     transaction.Commit();
-                    return _response.GetResponse(true, "ok", expenseDeleted);
+                    return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", expenseDeleted);
                 }
                 catch(IdRequiredException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch(RecordNotFoundException e)
                 {
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.WARNING, e.Message);
                 }
                 catch (Exception e)
                 {
                     transaction.Rollback();
-                    return _response.GetResponse(false, e.Message);
+                    return _response.GetResponse((int)EnumCodeResponse.ERROR, e.Message);
                 }
             }
         }

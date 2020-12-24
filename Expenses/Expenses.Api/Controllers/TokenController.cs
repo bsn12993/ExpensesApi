@@ -17,20 +17,20 @@ namespace Expenses.Api.Controllers
             if (string.IsNullOrEmpty(user))
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new Response
                 {
-                    IsSuccess = false,
+                    Code = 200,
                     Message = "El usuario no es valido"
                 }, "application/json");
             var token = TokenGenerator.GenerateTokenJwt(user);
             if (!string.IsNullOrEmpty(token))
                 return Request.CreateResponse(HttpStatusCode.OK, new Response
                 {
-                    IsSuccess = true,
+                    Code = 200,
                     Result = token
                 }, "application/json");
             else
                 return Request.CreateResponse(HttpStatusCode.BadGateway, new Response
                 {
-                    IsSuccess = false,
+                    Code = 200,
                     Message = "No se pudo generar el token"
                 }, "application/json");
         }

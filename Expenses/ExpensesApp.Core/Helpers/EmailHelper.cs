@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Expenses.Core.Helpers
+﻿namespace Expenses.Core.Helpers
 {
     class EmailHelper
     {
