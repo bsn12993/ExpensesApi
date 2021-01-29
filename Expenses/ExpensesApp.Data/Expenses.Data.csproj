@@ -61,6 +61,10 @@
     <Compile Include="Migrations\202012131907281_001.designer.cs">
       <DependentUpon>202012131907281_001.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101101934110_add_image_colum.cs" />
+    <Compile Include="Migrations\202101101934110_add_image_colum.designer.cs">
+      <DependentUpon>202101101934110_add_image_colum.cs</DependentUpon>
+    </Compile>
     <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\ExpenseRepository.cs" />
@@ -101,6 +105,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012131907281_001.resx">
       <DependentUpon>202012131907281_001.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101101934110_add_image_colum.resx">
+      <DependentUpon>202101101934110_add_image_colum.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

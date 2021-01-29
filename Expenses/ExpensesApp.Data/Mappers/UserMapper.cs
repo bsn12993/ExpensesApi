@@ -58,7 +58,8 @@ namespace Expenses.Core.Mappers
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
-                LastName = user.LastName
+                LastName = user.LastName,
+                Image = user.Image
             };
         }
     }

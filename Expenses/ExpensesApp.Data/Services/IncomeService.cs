@@ -131,11 +131,15 @@ namespace Expenses.Data.Services
 
                     if (createIncome.Date == null)
                         throw new DateIsRequiredException("La fecha es requerida");
-                    
+
+                    if (createIncome.UserId == 0)
+                        throw new IdRequiredException("El id del usuario es requerido");
+
                     var income = new Income
                     {
                         Amount = createIncome.Amount,
-                        IncomeDate = createIncome.Date
+                        IncomeDate = createIncome.Date,
+                        UserId = createIncome.UserId
                     };
                     var item = _uow.Repository.IncomeRepository.Create(income);
                     transaction.Commit();

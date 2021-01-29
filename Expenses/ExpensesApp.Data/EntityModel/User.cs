@@ -22,5 +22,7 @@ namespace Expenses.Data.EntityModel
         public string Password { get; set; }
         [Column("email")]
         public string Email { get; set; }
+        [Column("image")]
+        public string Image { get; set; }
     }
 }

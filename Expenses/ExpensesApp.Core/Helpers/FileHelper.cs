@@ -1,12 +1,29 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Expenses.Core.Helpers
 {
-    static class FileHelper
+    public class FileHelper
     {
-        public static MemoryStream CreateFile()
+        public static string CreateFile(string base64, string path, string fileName)
         {
-            return null;
+            try
+            {
+                var imageBytes = Convert.FromBase64String(base64);
+                var filePath = Path.Combine(path, fileName);
+                File.WriteAllBytes(filePath, imageBytes);
+                return path;
+            }
+            catch(FileLoadException e)
+            {
+                throw e;
+            }
+            catch(FileNotFoundException e)
+            {
+                throw e;
+            }
         }
+
+ 
     }
 }

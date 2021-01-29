@@ -7,6 +7,8 @@ using Expenses.Core.Helpers;
 using Expenses.Core.Models.User;
 using ExpensesApp.Core.Exceptions;
 using ExpensesApp.Core.Enums;
+using ExpensesApp.Core.Helpers;
+using System.IO;
 
 namespace Expenses.Data.Services
 {
@@ -74,7 +76,9 @@ namespace Expenses.Data.Services
                 if (findUser == null) 
                     throw new RecordNotFoundException($"No se encontro el usuario con el correo {email}");
 
-                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", findUser.GetUserModel());
+                var userModel = findUser.GetUserModel();
+                userModel.Image = Path.Combine(DirectoryHelper.GetCurrentDomain(), userModel.Image);
+                return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", userModel);
             }
             catch(EmailRequiredException e)
             {
@@ -116,6 +120,8 @@ namespace Expenses.Data.Services
                         throw new NameIsRequiredException("El apellido es requerido");
 
                     var newUser = createUser.GetUserEntity();
+                    newUser.Image = Path.Combine(WebConfigHelper.PATH_FILES, WebConfigHelper.GetImageProfileDefault);
+
                     var userCreated = _uow.Repository.UserRepository.Create(newUser);
                     transaction.Commit();
                     return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", userCreated.GetUserModel());
@@ -148,9 +154,10 @@ namespace Expenses.Data.Services
         {
             using(var transaction = _uow.BeginTransaction())
             {
-
                 try
                 {
+                    var rootPath = DirectoryHelper.GetCurrentRootPath();
+
                     if (updateUser == null)
                         throw new ModelIsNullException("No se recibierón datos para crear un usuario");
 
@@ -159,15 +166,15 @@ namespace Expenses.Data.Services
 
                     if (string.IsNullOrEmpty(updateUser.Email))
                         throw new EmailRequiredException("El correo es requerido o no es valido");
-
+                    /*
                     if (string.IsNullOrEmpty(updateUser.Password))
                         throw new PasswordRequiredException("La contraseña es requerida");
-
+                    */
                     if (string.IsNullOrEmpty(updateUser.Name))
                         throw new NameIsRequiredException("El nombre es requerido");
 
                     if (string.IsNullOrEmpty(updateUser.LastName))
-                        throw new NameIsRequiredException("El apellido es requerido");
+                        throw new NameIsRequiredException("El apellido es requerido");                      
 
                     var findUser = _uow.Repository.UserRepository.FindById(userId);
                     if (findUser == null) 
@@ -175,11 +182,31 @@ namespace Expenses.Data.Services
 
                     findUser.Name = updateUser.Name;
                     findUser.LastName = updateUser.LastName;
-                    findUser.Password = updateUser.Password.Encrypt();
+                    //findUser.Password = updateUser.Password.Encrypt();
                     findUser.Email = updateUser.Email;
+
+                    if (!string.IsNullOrEmpty(updateUser.Image))
+                    {
+                        var filePath = Path.Combine(WebConfigHelper.PATH_FILES, "users");
+                        filePath = Path.Combine(filePath, updateUser.Id.ToString(), "profile");
+
+                        var fileName = $"{findUser.Name}.jpg";
+                        var newPath = Path.Combine(filePath, fileName);
+
+                        DirectoryHelper.DeleteDirectory(Path.Combine(rootPath, filePath));
+
+                        var imagePath = Path.Combine(rootPath, filePath);
+                        DirectoryHelper.CreateDirectory(imagePath);
+
+                        var urlPath = FileHelper.CreateFile(updateUser.Image, imagePath, fileName);
+                        findUser.Image = Path.Combine(DirectoryHelper.GetCurrentDomain(), newPath);
+                    }
 
                     var userUpdated = _uow.Repository.UserRepository.Update(findUser);
                     transaction.Commit();
+
+                    var userModel = userUpdated.GetUserModel();
+                    userModel.Image = Path.Combine(rootPath, userModel.Image);
 
                     return _response.GetResponse((int)EnumCodeResponse.SUCCESS, "ok", userUpdated.GetUserModel());
                 }

@@ -17,11 +17,13 @@ namespace ExpensesApp.Data.EntityModel
         public int Id { get; set; }
 
         [ForeignKey("User")]
+        [Column("userId")]
         public int UserId { get; set; }
         [Column("userId")]
         public User User { get; set; }
 
         [ForeignKey("Category")]
+        [Column("categoryId")]
         public int CategoryId { get; set; }
         [Column("categoryId")]
         public Category Category { get; set; }
