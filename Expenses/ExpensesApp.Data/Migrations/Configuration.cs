@@ -1,10 +1,7 @@
+using System.Data.Entity.Migrations;
+
 namespace ExpensesApp.Data.Migrations
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
-
     internal sealed class Configuration : DbMigrationsConfiguration<Expenses.Data.Context.EntityContext>
     {
         public Configuration()

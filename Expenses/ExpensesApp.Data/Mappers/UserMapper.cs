@@ -4,7 +4,6 @@ using Expenses.Core.Models.User;
 using Expenses.Data.EntityModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Expenses.Core.Mappers
 {

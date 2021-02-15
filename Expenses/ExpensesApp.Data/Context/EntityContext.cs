@@ -1,17 +1,14 @@
 ﻿using Expenses.Data.EntityModel;
 using ExpensesApp.Data.EntityModel;
-using System;
-using System.Collections.Generic;
+using ExpensesApp.Data.Models;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expenses.Data.Context
 {
     public class EntityContext : DbContext
     {
-        public EntityContext():base("Data Source=LAPTOP-CFVKV8OI;Initial Catalog=expenses;User ID=sa;Password=123;")
+        public EntityContext()
+            :base("Data Source=expenses.mssql.somee.com;Initial Catalog=expenses;User ID=expense_admin;Password=bsn123456")
         {
 
         }
